@@ -82,11 +82,6 @@ def draw_walls():
     pygame.draw.rect(screen, BLACK, (0, doorway_pos[1] + doorway_height, 10, HEIGHT - (doorway_pos[1] + doorway_height)))  # Left wall below doorway
 
 
-# Function to check if the box is on the switch
-def is_box_on_switch(box_pos, switch_pos):
-    return (switch_pos[0] <= box_pos[0] <= switch_pos[0] + switch_size and
-            switch_pos[1] <= box_pos[1] <= switch_pos[1] + switch_size)
-
 # Helper function to convert shapes to shapely polygons
 def shape_to_polygon(shape: Union[Circle, Rect]):
     if "radius" in shape:
@@ -97,7 +92,7 @@ def shape_to_polygon(shape: Union[Circle, Rect]):
         # If the shape is a rectangle
         x, y = shape['topLeft']
         width, height = shape['width'], shape['height']
-        return Polygon([(x, y), (x + width, y), (x + width, y - height), (x, y - height)])
+        return Polygon([(x, y), (x + width, y), (x + width, y + height), (x, y + height)])
     else:
         raise ValueError("Unknown shape type")
 
@@ -107,30 +102,83 @@ def calculate_overlap_percentage(shape1: Union[Circle, Rect], shape2: Union[Circ
     polygon1 = shape_to_polygon(shape1)
     polygon2 = shape_to_polygon(shape2)
     
+    print("polygon1: %s" % polygon1)
+    print("polygon2: %s" % polygon2)
+    
     # Calculate the intersection area
     intersection_area = polygon1.intersection(polygon2).area
     
     # Calculate the area of the first shape
     shape1_area = polygon1.area
     
+    if shape1_area == 0:
+        return 0
+    
+    print("shape1_area: %f\n" % shape1_area)
+    print("intersection_area: %f\n" % intersection_area)
+    print("intersection_area / shape1_area: %s" % (intersection_area / shape1_area))
+    print("(intersection_area / shape1_area) * 100: %s\n" % ((intersection_area / shape1_area) * 100))
+     
     # Calculate the percentage of the first shape that overlaps with the second shape
-    overlap_percentage = (intersection_area / shape1_area) * 100 if shape1_area > 0 else 0
+    overlap_percentage = (intersection_area / shape1_area) * 100
+    print("overlap_percent: %f" % overlap_percentage)
     
     return overlap_percentage
 
+
+# Function to check if the box is on the switch
+def is_box_on_switch():
+    if box_held_by_robot:
+        return False
+    overlap = calculate_overlap_percentage(switch, box) >= 40
+    return overlap
+
+def handle_space_pressed():
+    global box_held_by_robot, switch_pressed, light_on
+    
+    if box_held_by_robot:
+        # Drop the box if spacebar is pressed again
+        print("SPACE PRESSED: DROP")
+        box_held_by_robot = False        
+    else:
+        # in_range_of_box = robot_pos[0] + robot_size + pickup_range >= box["topLeft"][0] \
+        #     and robot_pos[0] + pickup_range <= box["topLeft"][0] + box_size \
+        #         and robot_pos[1] + robot_size + pickup_range >= box["topLeft"][1] \
+        #             and robot_pos[1] + robot_size + pickup_range <= box["topLeft"][1] + box_size
+        # in_range_of_box = calculate_overlap_percentage(box, robot)
+        in_range_of_box = True
+        # Check if robot is near the box and can pick it up or drop it
+        if in_range_of_box:
+            print("SPACE PRESSED: PICKUP")
+            box_held_by_robot = True
+
+    # Check if the box is on the switch
+    if not box_held_by_robot and is_box_on_switch():
+        switch_pressed = True
+        light_on = False  # Turn off the lights
+    else:
+        switch_pressed = False
+        light_on = True  # Turn on the lights if the box is not on the switch
+
 # Main loop
 running = True
+
 while running:
+    # Temporary position to check boundary conditions
+    new_robot_pos = robot_pos.copy()
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                handle_space_pressed()
 
     # Key press logic for robot movement
     keys = pygame.key.get_pressed()
-
-    # Temporary position to check boundary conditions
-    new_robot_pos = robot_pos.copy()
-
+    
+            
     if keys[pygame.K_LEFT]:
         new_robot_pos[0] -= robot_speed
     if keys[pygame.K_RIGHT]:
@@ -158,34 +206,6 @@ while running:
 
     # Update robot position after boundary checks
     robot_pos = new_robot_pos
-    
-    
-    if box_held_by_robot:
-        # Drop the box if spacebar is pressed again
-        if keys[pygame.K_SPACE]:
-            print("SPACE PRESSED: DROP")
-            box_held_by_robot = False        
-    else:
-        if keys[pygame.K_SPACE]:  # Spacebar to pick up the box
-            # in_range_of_box = robot_pos[0] + robot_size + pickup_range >= box["topLeft"][0] \
-            #     and robot_pos[0] + pickup_range <= box["topLeft"][0] + box_size \
-            #         and robot_pos[1] + robot_size + pickup_range >= box["topLeft"][1] \
-            #             and robot_pos[1] + robot_size + pickup_range <= box["topLeft"][1] + box_size
-            # in_range_of_box = calculate_overlap_percentage(box, robot)
-            in_range_of_box = True
-            # Check if robot is near the box and can pick it up or drop it
-            if in_range_of_box:
-                print("SPACE PRESSED: PICKUP")
-                box_held_by_robot = True
-
-
-    # Check if the box is on the switch
-    if is_box_on_switch(box["topLeft"], switch_pos=switch["center"]):
-        switch_pressed = True
-        light_on = False  # Turn off the lights
-    else:
-        switch_pressed = False
-        light_on = True  # Turn on the lights if the box is not on the switch
 
     # Drawing background (change based on light)
     if light_on:
