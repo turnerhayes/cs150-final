@@ -65,7 +65,7 @@ class Robot(pygame.sprite.Sprite):
     def __init__(self) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale(
-            pygame.image.load(os.path.join(os.path.dirname(__file__), "./robot.jpg")).convert(),
+            pygame.image.load(os.path.join(os.path.dirname(__file__), "./robot.png")).convert_alpha(),
             (robot_size, robot_size)
         )
         
@@ -129,7 +129,6 @@ def handle_space_pressed():
     
     if box_held_by_robot:
         # Drop the box if spacebar is pressed again
-        print("SPACE PRESSED: DROP")
         box_held_by_robot = False        
     else:
         # in_range_of_box = robot_pos[0] + robot_size + pickup_range >= box["topLeft"][0] \
@@ -140,7 +139,6 @@ def handle_space_pressed():
         in_range_of_box = True
         # Check if robot is near the box and can pick it up or drop it
         if in_range_of_box:
-            print("SPACE PRESSED: PICKUP")
             box_held_by_robot = True
 
     # Check if the box is on the switch
