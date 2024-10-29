@@ -102,9 +102,6 @@ def calculate_overlap_percentage(shape1: Union[Circle, Rect], shape2: Union[Circ
     polygon1 = shape_to_polygon(shape1)
     polygon2 = shape_to_polygon(shape2)
     
-    print("polygon1: %s" % polygon1)
-    print("polygon2: %s" % polygon2)
-    
     # Calculate the intersection area
     intersection_area = polygon1.intersection(polygon2).area
     
@@ -113,15 +110,9 @@ def calculate_overlap_percentage(shape1: Union[Circle, Rect], shape2: Union[Circ
     
     if shape1_area == 0:
         return 0
-    
-    print("shape1_area: %f\n" % shape1_area)
-    print("intersection_area: %f\n" % intersection_area)
-    print("intersection_area / shape1_area: %s" % (intersection_area / shape1_area))
-    print("(intersection_area / shape1_area) * 100: %s\n" % ((intersection_area / shape1_area) * 100))
      
     # Calculate the percentage of the first shape that overlaps with the second shape
     overlap_percentage = (intersection_area / shape1_area) * 100
-    print("overlap_percent: %f" % overlap_percentage)
     
     return overlap_percentage
 
