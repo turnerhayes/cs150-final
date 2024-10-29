@@ -1,14 +1,24 @@
 import os
 from typing import Union, TypedDict, Tuple
 from shapely import Polygon, Point
-import math
 import pygame
 
 Circle = TypedDict("Circle", {"center": Tuple[int, int], "radius": int})
 Rect = TypedDict("Rect", {"topLeft": Tuple[int, int], "width": int, "height": int})
-SpriteShape = TypedDict("SpriteShape", {"sprite": pygame.sprite.Sprite, "topLeft": Tuple[int, int]})
 
-Shape = Union[Circle, Rect, SpriteShape]
+
+class Robot(pygame.sprite.Sprite):
+    def __init__(self) -> None:
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(
+            pygame.image.load(os.path.join(os.path.dirname(__file__), "./robot.png")).convert_alpha(),
+            (robot_size, robot_size)
+        )
+        
+        self.rect = self.image.get_rect()
+RobotShape = TypedDict("RobotShape", {"robot": Robot, "topLeft": Tuple[int, int]})
+
+Shape = Union[Circle, Rect, RobotShape]
 
 # Initialize pygame
 pygame.init()
@@ -30,7 +40,7 @@ BLUE = (0, 0, 255)
 robot_size = 50
 robot_color = GREEN
 robot_speed = 5
-robot_pos = [WIDTH // 4, HEIGHT // 2]
+robot_pos: Tuple[int, int] = (WIDTH // 4, HEIGHT // 2)
 
 # Define box parameters
 box_size = 40
@@ -61,16 +71,6 @@ font = pygame.font.Font(None, 36)
 # Game clock
 clock = pygame.time.Clock()
 
-class Robot(pygame.sprite.Sprite):
-    def __init__(self) -> None:
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(
-            pygame.image.load(os.path.join(os.path.dirname(__file__), "./robot.png")).convert_alpha(),
-            (robot_size, robot_size)
-        )
-        
-        self.rect = self.image.get_rect()
-
 def draw_walls():
     # Draw the walls (except for the doorway)
     pygame.draw.rect(screen, BLACK, (0, 0, WIDTH, 10))  # Top wall
@@ -83,7 +83,14 @@ def draw_walls():
 
 
 # Helper function to convert shapes to shapely polygons
-def shape_to_polygon(shape: Union[Circle, Rect]):
+def shape_to_polygon(shape: Shape):
+    if "robot" in shape:
+        robot_rect = shape["robot"].rect
+        shape = Rect(
+            topLeft=shape["topLeft"],
+            width=robot_rect.width,
+            height=robot_rect.height
+        )
     if "radius" in shape:
         # If the shape is a circle
         center = Point(shape['center'])
@@ -97,7 +104,7 @@ def shape_to_polygon(shape: Union[Circle, Rect]):
         raise ValueError("Unknown shape type")
 
 # Generalized overlap percentage calculation function
-def calculate_overlap_percentage(shape1: Union[Circle, Rect], shape2: Union[Circle, Rect]):
+def calculate_overlap_percentage(shape1: Shape, shape2: Shape):
     # Convert both shapes to shapely polygons
     polygon1 = shape_to_polygon(shape1)
     polygon2 = shape_to_polygon(shape2)
@@ -124,19 +131,27 @@ def is_box_on_switch():
     overlap = calculate_overlap_percentage(switch, box) >= 40
     return overlap
 
-def handle_space_pressed():
+def handle_space_pressed(robot_pos: Tuple[int, int]):
     global box_held_by_robot, switch_pressed, light_on
     
     if box_held_by_robot:
         # Drop the box if spacebar is pressed again
         box_held_by_robot = False        
     else:
-        # in_range_of_box = robot_pos[0] + robot_size + pickup_range >= box["topLeft"][0] \
-        #     and robot_pos[0] + pickup_range <= box["topLeft"][0] + box_size \
-        #         and robot_pos[1] + robot_size + pickup_range >= box["topLeft"][1] \
-        #             and robot_pos[1] + robot_size + pickup_range <= box["topLeft"][1] + box_size
-        # in_range_of_box = calculate_overlap_percentage(box, robot)
-        in_range_of_box = True
+        overlap_pickup = calculate_overlap_percentage(
+            Circle(
+                center=(
+                    box["topLeft"][0] + box["width"] // 2,
+                    box["topLeft"][1] + box["height"] // 2
+                ),
+                radius=pickup_range
+            ),
+            RobotShape(
+                robot=robot,
+                topLeft=robot_pos
+            )
+        )
+        in_range_of_box = overlap_pickup > 0
         # Check if robot is near the box and can pick it up or drop it
         if in_range_of_box:
             box_held_by_robot = True
@@ -154,19 +169,10 @@ running = True
 
 while running:
     # Temporary position to check boundary conditions
-    new_robot_pos = robot_pos.copy()
+    new_robot_pos: list[int] = list(robot_pos)
     
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                handle_space_pressed()
-
     # Key press logic for robot movement
     keys = pygame.key.get_pressed()
-    
             
     if keys[pygame.K_LEFT]:
         new_robot_pos[0] -= robot_speed
@@ -194,7 +200,14 @@ while running:
         new_robot_pos[0] = WIDTH - robot_size
 
     # Update robot position after boundary checks
-    robot_pos = new_robot_pos
+    robot_pos = (new_robot_pos[0], new_robot_pos[1])
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                handle_space_pressed(robot_pos=robot_pos)
 
     # Drawing background (change based on light)
     if light_on:
@@ -205,7 +218,6 @@ while running:
     draw_walls()
 
     # Draw the robot
-    # pygame.draw.rect(screen, robot_color, (robot_pos[0], robot_pos[1], robot_size, robot_size))
     robot = Robot()
     screen.blit(robot.image, (robot_pos[0], robot_pos[1]), robot.rect)
 
@@ -217,15 +229,6 @@ while running:
         box_color,
         (box["topLeft"][0], box["topLeft"][1], box["width"], box["height"])
     )
-    
-    # Draw pickup radius
-    # pygame.draw.circle(
-    #     screen,
-    #     BLUE,
-    #     (box["topLeft"][0] + box["width"]/2, box["topLeft"][1] + box["height"]/2),
-    #     pickup_range,
-    #     1
-    # )
 
     # Draw the switch
     pygame.draw.circle(screen, BLACK, switch["center"], switch["radius"])
