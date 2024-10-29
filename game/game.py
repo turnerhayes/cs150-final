@@ -16,9 +16,23 @@ class Robot(pygame.sprite.Sprite):
         )
         
         self.rect = self.image.get_rect()
+        
 RobotShape = TypedDict("RobotShape", {"robot": Robot, "topLeft": Tuple[int, int]})
 
-Shape = Union[Circle, Rect, RobotShape]
+class Box(pygame.sprite.Sprite):
+    def __init__(self, box_size: int) -> None:
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(
+            pygame.image.load(os.path.join(os.path.dirname(__file__), "./box.png")).convert_alpha(),
+            (box_size, box_size)
+        )
+        
+        self.rect = self.image.get_rect()
+        
+RobotShape = TypedDict("RobotShape", {"robot": Robot, "topLeft": Tuple[int, int]})
+BoxShape = TypedDict("BoxShape", {"box": Box, "topLeft": Tuple[int, int]})
+
+Shape = Union[Circle, Rect, RobotShape, BoxShape]
 
 # Initialize pygame
 pygame.init()
@@ -39,12 +53,14 @@ BLUE = (0, 0, 255)
 # Define robot parameters
 robot_size = 50
 robot_color = GREEN
+robot = Robot()
 robot_speed = 5
 robot_pos: Tuple[int, int] = (WIDTH // 4, HEIGHT // 2)
 
 # Define box parameters
 box_size = 40
-box = Rect(topLeft=(WIDTH // 2, HEIGHT // 2), width=box_size, height=box_size)
+box_pos = (WIDTH // 2, HEIGHT // 2)
+box = Box(box_size)
 box_color = RED
 box_grabbed = False
 box_held_by_robot = False
@@ -91,6 +107,13 @@ def shape_to_polygon(shape: Shape):
             width=robot_rect.width,
             height=robot_rect.height
         )
+    elif "box" in shape:
+        box_rect = shape["box"].rect
+        shape = Rect(
+            topLeft=shape["topLeft"],
+            width=box_rect.width,
+            height=box_rect.height
+        )
     if "radius" in shape:
         # If the shape is a circle
         center = Point(shape['center'])
@@ -104,7 +127,7 @@ def shape_to_polygon(shape: Shape):
         raise ValueError("Unknown shape type")
 
 # Generalized overlap percentage calculation function
-def calculate_overlap_percentage(shape1: Shape, shape2: Shape):
+def calculate_overlap_percentage(shape1: Shape, shape2: Shape) -> float:
     # Convert both shapes to shapely polygons
     polygon1 = shape_to_polygon(shape1)
     polygon2 = shape_to_polygon(shape2)
@@ -128,7 +151,13 @@ def calculate_overlap_percentage(shape1: Shape, shape2: Shape):
 def is_box_on_switch():
     if box_held_by_robot:
         return False
-    overlap = calculate_overlap_percentage(switch, box) >= 40
+    overlap = calculate_overlap_percentage(
+        switch,
+        BoxShape(
+            box=box,
+            topLeft=box_pos
+        )
+    ) >= 40
     return overlap
 
 def handle_space_pressed(robot_pos: Tuple[int, int]):
@@ -141,8 +170,8 @@ def handle_space_pressed(robot_pos: Tuple[int, int]):
         overlap_pickup = calculate_overlap_percentage(
             Circle(
                 center=(
-                    box["topLeft"][0] + box["width"] // 2,
-                    box["topLeft"][1] + box["height"] // 2
+                    box_pos[0] + box.rect.width // 2,
+                    box_pos[1] + box.rect.height // 2
                 ),
                 radius=pickup_range
             ),
@@ -217,21 +246,16 @@ while running:
 
     draw_walls()
 
+    # Draw the switch
+    pygame.draw.circle(screen, BLACK, switch["center"], switch["radius"])
+
     # Draw the robot
-    robot = Robot()
     screen.blit(robot.image, (robot_pos[0], robot_pos[1]), robot.rect)
 
     if box_held_by_robot:
-        box["topLeft"] = (robot_pos[0] + robot_size, robot_pos[1])
+        box_pos = (robot_pos[0] + robot_size, robot_pos[1])
     # Draw the box
-    pygame.draw.rect(
-        screen,
-        box_color,
-        (box["topLeft"][0], box["topLeft"][1], box["width"], box["height"])
-    )
-
-    # Draw the switch
-    pygame.draw.circle(screen, BLACK, switch["center"], switch["radius"])
+    screen.blit(box.image, box_pos, box.rect)
 
     # Display status
     status_text = font.render(f"Lights {'ON' if light_on else 'OFF'}", True, BLACK if light_on else WHITE)
