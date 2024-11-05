@@ -1,14 +1,15 @@
-#!/usr/bin/python3
+import pygame
 
-from simulator import Simulator
+# Initialize pygame
+pygame.init()
 
+pygame.display.set_caption('Room Simulation')
 
-def run():
-    sim = Simulator()
-    
-    sim.add_object("light_switch")
-    sim.add_object("box", can_pick_up=False)
-    print("simulator objects: %s" % sim.list_objects())
-    
+# Import Game *after* pygame init
+from game import Game
+game = Game()
 
-run()
+game.start()
+
+# Quit pygame
+pygame.quit()
