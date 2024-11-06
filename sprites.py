@@ -1,16 +1,19 @@
 import os
 import pygame
+import math
+from typing import Union, Tuple
 
 class _SimulationSprite(pygame.sprite.Sprite):
-    def __init__(self, img_path: str, size: int) -> None:
+    def __init__(self, img_path: str, size: Union[int,Tuple[int,int]]) -> None:
+        if isinstance(size, int):
+            size = (size, size)
+            
         pygame.sprite.Sprite.__init__(self)
-        img = pygame.image.load(
-                img_path
-            )
-        print("img: %r" % img)
         self.image = pygame.transform.scale(
-            img.convert_alpha(),
-            (size, size)
+            pygame.image.load(
+                img_path
+            ).convert_alpha(),
+            size
         )
         
         self.rect = self.image.get_rect()
@@ -20,7 +23,9 @@ class Robot(_SimulationSprite):
         _SimulationSprite.__init__(
             self,
             img_path=os.path.join(os.path.dirname(__file__), "./robot.png"),
-            size=robot_size
+            # Image is 188px x 206px; maintain aspect ratio with sortest side
+            # set to robot_size 
+            size=(math.ceil(206 * (robot_size/188)), robot_size)
         )
 
 class Box(_SimulationSprite):
@@ -28,5 +33,7 @@ class Box(_SimulationSprite):
         _SimulationSprite.__init__(
             self,
             img_path=os.path.join(os.path.dirname(__file__), "./box.png"),
-            size=box_size
+            # Image is 59px x 54px; maintain aspect ratio with sortest side
+            # set to box_size
+            size=(box_size, math.ceil(59 * (box_size/54)))
         )

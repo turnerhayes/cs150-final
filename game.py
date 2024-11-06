@@ -65,11 +65,63 @@ class Game:
         if (not self._robot):
             self._robot = Robot(Game.BOX_SIZE)
         return self._robot
-        
+    
+    """
+    Begin running the simulation (does the simulation loop). Exits once the
+    simulation is done.
+    """
     def start(self):
         self.running = True
         while self.running:
             self._run_loop()
+    
+    """
+    Moves the robot left one unit (exact distance determined by
+    Game.ROBOT_SPEED).
+    """
+    def move_left(self):
+        self.robot_pos = (self.robot_pos[0] - Game.ROBOT_SPEED, self.robot_pos[1])
+    
+    """
+    Moves the robot right one unit (exact distance determined by
+    Game.ROBOT_SPEED).
+    """
+    def move_right(self):
+        self.robot_pos = (self.robot_pos[0] + Game.ROBOT_SPEED, self.robot_pos[1])
+    
+    """
+    Moves the robot up one unit (exact distance determined by
+    Game.ROBOT_SPEED).
+    """
+    def move_up(self):
+        self.robot_pos = (self.robot_pos[0], self.robot_pos[1] - Game.ROBOT_SPEED)
+    
+    """
+    Moves the robot down one unit (exact distance determined by
+    Game.ROBOT_SPEED).
+    """
+    def move_down(self):
+        self.robot_pos = (self.robot_pos[0], self.robot_pos[1] + Game.ROBOT_SPEED)
+    
+    """
+    Makes the robot pick up the box if it can.
+    
+    Returns:
+        True if the robot picked up the box, False if it was unable to pick it
+        up for any reason
+    """
+    def grab_item(self):
+        if not self._can_pickup_box():
+            return False
+        
+        self.box_held_by_robot = True
+    
+    def release_item(self):
+        if not self.box_held_by_robot:
+            return False
+        
+        self.box_held_by_robot = False
+        return True
 
     def _draw_walls(self):
         # Draw the walls (except for the doorway)
@@ -90,8 +142,15 @@ class Game:
             )
         )  # Left wall below doorway
 
-    # Function to check if the box is on the switch
-    def _is_box_on_switch(self):
+    """
+    Determines whether the box is currently on top of the switch (and not
+    being held by the robot)
+    
+    Returns:
+        True if the box is on top of the switch and not being held, False
+        otherwise
+    """
+    def is_box_on_switch(self):
         box = self._get_box()
         if self.box_held_by_robot:
             return False
@@ -104,71 +163,71 @@ class Game:
         ) >= 40
         return overlap
 
-    def _handle_space_pressed(self):
+    def _can_pickup_box(self):
+        if self.box_held_by_robot:
+            return False
+        
         box = self._get_box()
         robot = self._get_robot()
+        
+        overlap_pickup = calculate_overlap_percentage(
+            Circle(
+                center=(
+                    self.box_pos[0] + box.rect.width // 2,
+                    self.box_pos[1] + box.rect.height // 2
+                ),
+                radius=Game.PICKUP_RANGE
+            ),
+            RobotShape(
+                robot=robot,
+                topLeft=self.robot_pos
+            )
+        )
+        return overlap_pickup > 0
+
+    def _handle_space_pressed(self):
         if self.box_held_by_robot:
             # Drop the box if spacebar is pressed again
-            self.box_held_by_robot = False        
+            self.release_item()     
         else:
-            overlap_pickup = calculate_overlap_percentage(
-                Circle(
-                    center=(
-                        self.box_pos[0] + box.rect.width // 2,
-                        self.box_pos[1] + box.rect.height // 2
-                    ),
-                    radius=Game.PICKUP_RANGE
-                ),
-                RobotShape(
-                    robot=robot,
-                    topLeft=self.robot_pos
-                )
-            )
-            in_range_of_box = overlap_pickup > 0
             # Check if robot is near the box and can pick it up or drop it
-            if in_range_of_box:
-                self.box_held_by_robot = True
+            self.grab_item()
 
         # Check if the box is on the switch
-        if not self.box_held_by_robot and self._is_box_on_switch():
+        if not self.box_held_by_robot and self.is_box_on_switch():
             self.switch_pressed = True
         else:
             self.switch_pressed = False
     
     def _run_loop(self):
-        # Temporary position to check boundary conditions
-        new_robot_pos: list[int] = list(self.robot_pos)
-        
         # Key press logic for robot movement
         keys = pygame.key.get_pressed()
                 
         if keys[pygame.K_LEFT]:
-            new_robot_pos[0] -= self.ROBOT_SPEED
+            self.move_left()
         if keys[pygame.K_RIGHT]:
-            new_robot_pos[0] += self.ROBOT_SPEED
+            self.move_right()
         if keys[pygame.K_UP]:
-            new_robot_pos[1] -= self.ROBOT_SPEED
+            self.move_up()
         if keys[pygame.K_DOWN]:
-            new_robot_pos[1] += self.ROBOT_SPEED
+            self.move_down()
 
         # Check boundaries (walls)
         # Left wall with doorway
-        if (new_robot_pos[0] < 0 and
-            not (self.DOORWAY_POS[1] <= new_robot_pos[1] <= self.DOORWAY_POS[1] + self.DOORWAY_HEIGHT)):
-            new_robot_pos[0] = 0
+        if (self.robot_pos[0] < 0 and
+            not (self.DOORWAY_POS[1] <= self.robot_pos[1] <= self.DOORWAY_POS[1] + self.DOORWAY_HEIGHT)):
+            self.robot_pos = (0, self.robot_pos[1])
 
         # Top and bottom walls
-        if new_robot_pos[1] < 0:
-            new_robot_pos[1] = 0
-        if new_robot_pos[1] > Game.HEIGHT - Game.ROBOT_SIZE:
-            new_robot_pos[1] = Game.HEIGHT - Game.ROBOT_SIZE
+        if self.robot_pos[1] < 0:
+            self.robot_pos = (self.robot_pos[0], 0)
+        if self.robot_pos[1] > Game.HEIGHT - Game.ROBOT_SIZE:
+            self.robot_pos = (self.robot_pos[0], Game.HEIGHT - Game.ROBOT_SIZE)
 
         # Right wall
-        if new_robot_pos[0] > Game.WIDTH - Game.ROBOT_SIZE:
-            new_robot_pos[0] = Game.WIDTH - Game.ROBOT_SIZE
+        if self.robot_pos[0] > Game.WIDTH - Game.ROBOT_SIZE:
+            self.robot_pos = (Game.WIDTH - Game.ROBOT_SIZE, self.robot_pos[1])
 
-        # Update robot position after boundary checks
-        self.robot_pos = (new_robot_pos[0], new_robot_pos[1])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
