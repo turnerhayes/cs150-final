@@ -1,4 +1,4 @@
-goRight
-goLeft
-goUp
-goDown
+moveRight
+moveLeft
+moveUp
+moveDown
