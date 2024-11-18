@@ -158,10 +158,15 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
 
     @TRADEService
     public AlternateResponse parseIt(String input) {
-
+        log.info("parseIt(" + input +")");
         ParserResponse pr = new ParserResponse();
         pr.intention = new Intention();
-        pr.intention.intent = input;
+        pr.intention.intent = UtteranceType.INSTRUCT.name();
+        pr.intention.proposition = new Proposition();
+        pr.intention.proposition.text = input;
+        pr.intention.proposition.arguments = new String[0];
+        pr.referents = new Referent[0];
+        pr.descriptors = new Descriptor[0];
 
         return new AlternateResponse(pr, new Symbol("roboshopper"));
     }
