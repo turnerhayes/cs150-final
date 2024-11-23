@@ -20,4 +20,8 @@ public interface BoxBotSimulatorInterface {
     @TRADEService
     @Action
     Justification moveDown();
+
+    @TRADEService
+    @Action
+    Justification toggleHold();
 }
