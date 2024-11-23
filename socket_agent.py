@@ -31,3 +31,17 @@ if __name__ == "__main__":
 
         print("Observations: ", output["observation"])
         print("Violations", output["violations"])
+        
+        if output["observation"]["is_in_pickup_range"]:
+            # assume this is the only agent in the game
+            action = "TOGGLE_HOLD"
+
+            print("Sending action: ", action)
+            sock_game.send(str.encode(action))  # send action to env
+
+            output = recv_socket_data(sock_game)  # get observation from env
+            output = json.loads(output)
+
+            print("Observations: ", output["observation"])
+            print("Violations", output["violations"])
+            

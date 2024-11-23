@@ -16,6 +16,7 @@ class Observation(TypedDict):
     switch_pos: Position
     is_switch_pressed: bool
     box_pos: Union[Position, None]
+    is_in_pickup_range: bool
 
 DIRECTION_VECTOR = {
     Direction.UP: (0, -1),
@@ -284,4 +285,5 @@ class Game:
             "switch_pos": self.switch_pos,
             "box_pos": None if self.is_holding_box else self.box_pos,
             "is_switch_pressed": self.is_box_on_switch(),
+            "is_in_pickup_range": self._can_pickup_box(),
         })
