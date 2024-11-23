@@ -206,20 +206,28 @@ class Game:
                     topLeft=self.box_pos
                 )
             ) > 0:
+                print("robot overlaps box")
                 return True
         return False
     
     def hits_wall(self, pos: Position) -> bool:
-        if pos[0] <= self.wall_width:
+        robot_left = self.robot_pos[0]
+        robot_right = self.robot_pos[0] + self.robot_size
+        
+        if self.is_holding_box:
+            robot_right += self.box_size
+            
+
+        if robot_left <= self.wall_width:
             # Hits left wall
             return True
-        if pos[0] >= (self.width - self.wall_width):
+        if robot_right >= (self.width - self.wall_width):
             # Hits right wall
             return True
         if pos[1] <= self.wall_width:
             # Hits top wall
             return True
-        if pos[0] >= (self.height - self.wall_width):
+        if pos[1] + self.robot_size >= (self.height - self.wall_width):
             # Hits bottom wall
             return True
         
