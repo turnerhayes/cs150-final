@@ -1,4 +1,6 @@
-from typing import Tuple, Union
+from typing import Tuple, Union, TypedDict
+import json
+
 from direction import Direction
 from sprites import Robot, Box
 from shapes import Circle, calculate_overlap_percentage, BoxShape, RobotShape
@@ -8,20 +10,12 @@ import pygame
 
 Position = Tuple[int, int]
 
-class Observation:
-    def __init__(
-        self,
-        is_holding_box: bool,
-        robot_pos: Position,
-        switch_pos: Position,
-        is_switch_pressed: bool,
-        box_pos: Union[Position, None] = None
-    ) -> None:
-        self.is_holding_box = is_holding_box
-        self.robot_pos = robot_pos
-        self.switch_pos = switch_pos
-        self.is_switch_pressed = is_switch_pressed
-        self.box_pos = None if is_holding_box else box_pos
+class Observation(TypedDict):
+    is_holding_box: bool
+    robot_pos: Position
+    switch_pos: Position
+    is_switch_pressed: bool
+    box_pos: Union[Position, None]
 
 DIRECTION_VECTOR = {
     Direction.UP: (0, -1),
@@ -284,9 +278,10 @@ class Game:
         return overlap
     
     def observation(self) -> Observation:
-        return Observation(
-            is_holding_box=self.is_holding_box,
-            robot_pos=self.robot_pos,
-            switch_pos=self.switch_pos,
-            is_switch_pressed=self.is_box_on_switch(),
-        )
+        return Observation({
+            "is_holding_box": self.is_holding_box,
+            "robot_pos": self.robot_pos,
+            "switch_pos": self.switch_pos,
+            "box_pos": None if self.is_holding_box else self.box_pos,
+            "is_switch_pressed": self.is_box_on_switch(),
+        })
