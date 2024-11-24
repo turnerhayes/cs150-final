@@ -1,0 +1,136 @@
+{
+  "testName" : "actionModificationTest",
+  "testlets" : [ {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "hello evan", "true" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "learnAction(dempster,doasquat(dempster))", "ACT", "SKIPPENDING", "1704824810652" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "raise(dempster,arms)", "ACT", "NORMAL", "1704824815619" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824815619", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "crouchDown(dempster)", "ACT", "NORMAL", "1704824820621" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824820621", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "standUp(dempster)", "ACT", "NORMAL", "1704824825637" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824825637", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "endActionLearning(dempster,doasquat(dempster))", "ACT", "SKIPPENDING", "1704824830664" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824830664", "SUCCEEDED" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824810652", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "doasquat(dempster)", "ACT", "NORMAL", "1704824835636" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824835636", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "lower(dempster,arms)", "ACT", "NORMAL", "1704824840673" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824840673", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "retractBelief",
+      "serviceArgs" : [ "knows(dempster,actionDescription(doasquat(dempster),Y))", "null" ]
+    }, {
+      "serviceName" : "retractBelief",
+      "serviceArgs" : [ "actionDescription(doasquat(dempster),X)", "null" ]
+    }, {
+      "serviceName" : "assertBelief",
+      "serviceArgs" : [ "actionDescription(doasquat(dempster),steps(raise(dempster,arms),crouchDown(dempster),standUp(dempster)))", "null" ]
+    }, {
+      "serviceName" : "retractBelief",
+      "serviceArgs" : [ "probabilityOf(doasquat(dempster),X)", "null" ]
+    }, {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "to do a squat I raise my arms, then I crouch Down and then I stand Up", "true" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "modifyAction(dempster,doasquat(dempster),insert(lower(dempster,arms)),after(standUp(dempster)))", "ACT", "NORMAL", "1704824850659" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824850659", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "doasquat(dempster)", "ACT", "NORMAL", "1704824855679" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824855679", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "doasquat(shafer)", "ACT", "NORMAL", "1704824860695" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824860695", "SUCCEEDED" ]
+    } ]
+  } ]
+}

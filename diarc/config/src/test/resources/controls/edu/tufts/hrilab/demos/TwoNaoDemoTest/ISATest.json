@@ -1,0 +1,81 @@
+{
+  "testName" : "ISATest",
+  "testlets" : [ {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "hello evan", "true" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "stand(dempster)", "ACT", "NORMAL", "1704824992988" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824992988", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "no", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "doasquat(dempster)", "ACT", "NORMAL", "1704824998001" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704824998001", "FAILED" ]
+    }, {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "I can not do a squat because I do not know how to do a squat", "true" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "assertBelief",
+      "serviceArgs" : [ "capableOf(move(dempster,forward))", "null" ]
+    }, {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "yes", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "move(dempster,forward)", "ACT", "NORMAL", "1704825003007" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704825003007", "FAILED" ]
+    }, {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "I can not move forward because I see obstacle", "true" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "assertBelief",
+      "serviceArgs" : [ "capableOf(move(dempster,forward))", "null" ]
+    }, {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "yes", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "move(dempster,forward)", "ACT", "NORMAL", "1704825007998" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "cancelGoal(dempster)", "ACT", "SKIPPENDING", "1704825013009" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704825013009", "SUCCEEDED" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1704825007998", "CANCELED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "bye evan", "true" ]
+    } ]
+  } ]
+}

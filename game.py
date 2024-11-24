@@ -73,7 +73,7 @@ class Game:
     def start(self):
         self.running = True
         while self.running:
-            self._run_loop()
+            self.iterate_loop()
     
     """
     Moves the robot left one unit (exact distance determined by
@@ -199,7 +199,10 @@ class Game:
         else:
             self.switch_pressed = False
     
-    def _run_loop(self):
+    """
+    Processes the pygame event loop.
+    """
+    def iterate_loop(self):
         # Key press logic for robot movement
         keys = pygame.key.get_pressed()
                 

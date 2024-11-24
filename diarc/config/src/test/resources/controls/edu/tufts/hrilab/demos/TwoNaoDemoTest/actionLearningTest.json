@@ -1,0 +1,127 @@
+{
+  "testName" : "actionLearningTest",
+  "testlets" : [ {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "hello ravenna", "true" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "nod(shafer)", "ACT", "NORMAL", "1706196352935" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196352935", "FAILED" ]
+    }, {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "I can not nod because I do not know how to nod", "true" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "I can not learn how to nod because learning how to nod is admin Goal", "true" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "learnAction(dempster:agent,nod(dempster:agent))", "ACT", "SKIPPENDING", "1706196362905" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "changeLearningExecution(dempster:agent,execute)", "ACT", "SKIPPENDING", "1706196367905" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196367905", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "look(dempster:agent,up)", "ACT", "NORMAL", "1706196372905" ]
+    },{
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196372905", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "look(dempster:agent,down)", "ACT", "NORMAL", "1706196377904" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196377904", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "look(dempster:agent,up)", "ACT", "NORMAL", "1706196382901" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196382901", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "look(dempster:agent,down)", "ACT", "NORMAL", "1706196387903" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196387903", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "endActionLearning(dempster:agent,nod(dempster:agent))", "ACT", "NORMAL", "1706196392906" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196392906", "SUCCEEDED" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196362905", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "nod(shafer)", "ACT", "NORMAL", "1706196397911" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196397911", "SUCCEEDED" ]
+    } ]
+  }, {
+    "serviceCalls" : [ {
+      "serviceName" : "sayText",
+      "serviceArgs" : [ "okay", "true" ]
+    }, {
+      "serviceName" : "submitGoal",
+      "serviceArgs" : [ "nod(dempster:agent)", "ACT", "NORMAL", "1706196402915" ]
+    }, {
+      "serviceName" : "joinOnGoal",
+      "serviceArgs" : [ "1706196402915", "SUCCEEDED" ]
+    } ]
+  } ]
+}
