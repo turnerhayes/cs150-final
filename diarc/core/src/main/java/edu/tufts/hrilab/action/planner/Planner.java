@@ -7,6 +7,7 @@ package edu.tufts.hrilab.action.planner;
 import ai.thinkingrobots.trade.TRADE;
 import ai.thinkingrobots.trade.TRADEException;
 import ai.thinkingrobots.trade.TRADEService;
+import ai.thinkingrobots.trade.TRADEServiceConstraints;
 import edu.tufts.hrilab.action.*;
 import edu.tufts.hrilab.action.db.ActionDBEntry;
 import edu.tufts.hrilab.action.goal.Goal;
@@ -21,6 +22,7 @@ import edu.tufts.hrilab.pddl.Action;
 import edu.tufts.hrilab.pddl.Domain;
 import edu.tufts.hrilab.pddl.Pddl;
 import edu.tufts.hrilab.pddl.Problem;
+import edu.tufts.hrilab.llm.Completion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,8 +89,45 @@ public abstract class Planner {
 
     String plan = plan(domain, problem);
     if (plan == null) {
-      log.error("Can't plan.");
-      return null;
+      log.error("Planner could not generate a plan. Falling back to LLM.");
+
+      String domainStr = pddl.getDomain().generate("domain_llm");
+      String problemStr = pddl.getProblem().generate("domain_llm");
+
+      // log.info("PDDL domain:\n" + domainStr);
+      // log.info("PDDL problem:\n" + problemStr);
+
+      // Construct a natural language prompt for the LLM
+      String prompt = "I am a robot that needs to get a plan to accomplish " +
+        "an action. Using a PDDL domain and problem definition, generate a " +
+        "plan to accomplish the goal. Please only respond with a valid PDDL " +
+        "plan. Do not include explanations or any text that would make it an " +
+        "invalid plan. Each instruction should be on a single line and look " +
+        "similar to the following example\n\n:" +
+        "(gotospot spot spotlocation_0 spotlocation_5 room1 room3)\n\n" +
+        "The domain is defined as follows:\n\n" + domainStr +
+        "The problem is defined as follows:\n\n" + problemStr;
+
+      try {
+          Completion answer = TRADE.getAvailableService(
+              new TRADEServiceConstraints().name("chatCompletion").argTypes(String.class)
+          ).call(Completion.class, prompt);
+
+          if (answer != null) {
+              String llmResponse = answer.getText();
+              log.info("LLM response: " + llmResponse);
+
+              
+              // Here, assuming the response is directly usable as a plan
+              plan = llmResponse;
+          } else {
+              log.warn("LLM returned no response.");
+              return null; // No fallback plan available
+          }
+      } catch (TRADEException e) {
+          log.error("TRADE service call to LLM failed.", e);
+          return null; // No fallback plan available
+      }
     } else {
       log.info("PLAN = " + plan);
       lastPlan = plan;

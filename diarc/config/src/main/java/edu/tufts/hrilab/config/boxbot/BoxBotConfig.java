@@ -40,6 +40,7 @@ public class BoxBotConfig extends DiarcConfiguration {
     String[] aslFiles = new String[]{
       "core.asl",
       "vision.asl",
+      "boxbot.asl",
     };
 
     String gmArgs = String.format("-beliefinitfile demos.pl agents/boxbot.pl " +
