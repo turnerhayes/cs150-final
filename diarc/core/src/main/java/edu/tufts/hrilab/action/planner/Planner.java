@@ -94,8 +94,8 @@ public abstract class Planner {
       String domainStr = pddl.getDomain().generate("domain_llm");
       String problemStr = pddl.getProblem().generate("domain_llm");
 
-      // log.info("PDDL domain:\n" + domainStr);
-      // log.info("PDDL problem:\n" + problemStr);
+      log.info("PDDL domain:\n" + domainStr);
+      log.info("PDDL problem:\n" + problemStr);
 
       // Construct a natural language prompt for the LLM
       String prompt = "I am a robot that needs to get a plan to accomplish " +

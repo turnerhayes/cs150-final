@@ -10,12 +10,12 @@
 
 }
 
-() = moveToBox["?actor moves left"]() {
+() = moveToBox["?actor moves to the box"]() {
     edu.tufts.hrilab.fol.Predicate !query;
 
     conditions : {
-        pre obs: ~is_holding_box(?actor);
-        pre obs: ~can_grab_box(?actor);
+        pre obs : not(is_holding_box(?actor));
+        pre obs : not(can_grab_box(?actor));
     }
     effects : {
         success obs : can_grab_box(?actor);
