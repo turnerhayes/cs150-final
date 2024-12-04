@@ -1,4 +1,3 @@
-
 () = initializeagent[""]() {
     edu.tufts.hrilab.fol.Variable !x;
     edu.tufts.hrilab.fol.Predicate !pred;
@@ -7,7 +6,6 @@
     obs:can_grab_box(?actor);
 
     op:log(info, "Finished observing for ?actor");
-
 }
 
 () = moveToBox["?actor moves to the box"]() {
@@ -16,15 +14,16 @@
     edu.tufts.hrilab.fol.Predicate !southQuery;
     edu.tufts.hrilab.fol.Predicate !westQuery;
     edu.tufts.hrilab.fol.Predicate !eastQuery;
-    
 
     conditions : {
         pre obs : not(is_holding_box(?actor));
         pre obs : not(can_grab_box(?actor));
+        pre obs : not(is_in_pickup_range(?actor));
     }
     effects : {
         success obs : can_grab_box(?actor);
     }
+
     op: log(info, ">> moving to box");
 
     !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "can_grab_box(?actor)");
@@ -57,11 +56,12 @@
     edu.tufts.hrilab.fol.Predicate !eastQuery;
 
     conditions : {
-        pre obs : not(is_at_switch(?actor);
+        pre obs : not(is_at_switch(?actor));
     }
     effects : {
         success obs : is_at_switch(?actor);
     }
+
     op: log(info, ">> moving to light switch");
 
     !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "is_at_switch(?actor)");
@@ -94,11 +94,12 @@
     edu.tufts.hrilab.fol.Predicate !eastQuery;
 
     conditions : {
-        pre obs : not(is_at_door(?actor);
+        pre obs : not(is_at_door(?actor));
     }
     effects : {
         success obs : is_at_door(?actor);
     }
+
     op: log(info, ">> moving to the door");
 
     !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "is_at_door(?actor)");
