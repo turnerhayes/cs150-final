@@ -39,14 +39,12 @@ public class BoxBotConfig extends DiarcConfiguration {
     createInstance(SimpleNLGComponent.class);
       
     String[] aslFiles = new String[]{
-      "core.asl",
-      "vision.asl",
-      "boxbot.asl",
+      "domains/boxbot.asl",
     };
 
-    String gmArgs = String.format("-beliefinitfile demos.pl agents/boxbot.pl " +
+    String gmArgs = String.format("-beliefinitfile agents/boxbot.pl " +
             "-selector edu.tufts.hrilab.action.selector.GoalPlanningActionSelector " +
-            "-asl %s " +
+            "-asl domains/boxbot.asl " +
             "-goal listen(self)", String.join(" ", aslFiles));
 
     createInstance(GoalManagerComponent.class, gmArgs);
