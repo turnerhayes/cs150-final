@@ -32,7 +32,7 @@ if __name__ == "__main__":
         print("Observations: ", output["observation"])
         print("Violations", output["violations"])
         
-        if output["observation"]["is_in_pickup_range"]:
+        if output["observation"]["isInPickupRange"]:
             # assume this is the only agent in the game
             action = "TOGGLE_HOLD"
 

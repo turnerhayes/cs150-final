@@ -11,12 +11,12 @@ import pygame
 Position = Tuple[int, int]
 
 class Observation(TypedDict):
-    is_holding_box: bool
-    robot_pos: Position
-    switch_pos: Position
-    is_switch_pressed: bool
-    box_pos: Union[Position, None]
-    is_in_pickup_range: bool
+    isHoldingBox: bool
+    robotPos: Position
+    switchPos: Position
+    isSwitchPressed: bool
+    boxPos: Union[Position, None]
+    isInPickupRange: bool
 
 DIRECTION_VECTOR = {
     Direction.UP: (0, -1),
@@ -280,10 +280,10 @@ class Game:
     
     def observation(self) -> Observation:
         return Observation({
-            "is_holding_box": self.is_holding_box,
-            "robot_pos": self.robot_pos,
-            "switch_pos": self.switch_pos,
-            "box_pos": None if self.is_holding_box else self.box_pos,
-            "is_switch_pressed": self.is_box_on_switch(),
-            "is_in_pickup_range": self._can_pickup_box(),
+            "isHoldingBox": self.is_holding_box,
+            "robotPos": self.robot_pos,
+            "switchPos": self.switch_pos,
+            "boxPos": None if self.is_holding_box else self.box_pos,
+            "isSwitchPressed": self.is_box_on_switch(),
+            "isInPickupRange": self._can_pickup_box(),
         })
