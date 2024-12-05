@@ -1,5 +1,3 @@
-%% agents the system should know about
-%% actor(matt).
 name(self,boxbot).
 name(boxbot,boxbot).
 
@@ -13,9 +11,9 @@ memberOf(boxbot, self).
 object(boxbot, agent).
 object(self, agent).
 
-/*rules about who the agent is obliged to listen to */
-%% supervisors
-%% supervisor(matt).
+subtype(physical, object).
+subtype(switch, physical).
+subtype(box, physical).
+subtype(agent, physical).
 
-%% admin
 admin(admin).
