@@ -8,6 +8,15 @@ package edu.tufts.hrilab.boxbot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ai.thinkingrobots.trade.TRADEService;
+import edu.tufts.hrilab.action.annotations.Observes;
+import edu.tufts.hrilab.fol.Symbol;
+import edu.tufts.hrilab.fol.Variable;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -138,24 +147,39 @@ public class BoxBotObservation {
     return this.boxbot.is_holding_box;
   }
 
+  
+  @TRADEService
+  @Observes({"isInPickupRangeObs()"})
   public boolean isInPickupRangeObs() {
     log.info("IS IN PICKUP RANGE+++++++++++++++++++++++");
     return false;
     // return this.isInPickupRange;
   }
   
+  @TRADEService
+  @Observes({"westOfBox()"})
   public boolean westOfBox() {
     return this.boxbot.position[0] <= this.box.position[0];
   }
-
+  
+  
+  @TRADEService
+  @Observes({"eastOfBox()"})
   public boolean eastOfBox() {
     return this.boxbot.position[0] + this.boxbot.width >= this.box.position[0] + this.box.width;
   }
-
-  public boolean northOfBox() {
-    return this.boxbot.position[1] <= this.box.position[1];
+  
+  @TRADEService
+  @Observes({"northOfBox()"})
+  public List<HashMap<Variable, Symbol>> northOfBox() {
+    List<HashMap<Variable, Symbol>> list = new java.util.ArrayList<>();
+    list.add(new HashMap<>());
+    return list;
+    // return this.boxbot.position[1] <= this.box.position[1];
   }
-
+  
+  @TRADEService
+  @Observes({"southOfBox()"})
   public boolean southOfBox() {
     return this.boxbot.position[1] + this.boxbot.height >= this.box.position[1] + this.box.height;
   }
