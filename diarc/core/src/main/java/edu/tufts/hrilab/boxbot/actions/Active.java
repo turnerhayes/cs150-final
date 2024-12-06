@@ -6,7 +6,7 @@ package edu.tufts.hrilab.boxbot.actions;
 
 import com.google.gson.Gson;
 
-import edu.tufts.hrilab.boxbot.BoxbotObservation;
+import edu.tufts.hrilab.boxbot.BoxBotObservation;
 import edu.tufts.hrilab.boxbot.GameAction;
 
 public abstract class Active extends GameAction {
@@ -16,7 +16,7 @@ public abstract class Active extends GameAction {
         CommandResult command_result;
         int step;
         boolean gameOver;
-        BoxbotObservation observation;
+        BoxBotObservation observation;
 
         protected class CommandResult {
             String command;
@@ -28,7 +28,7 @@ public abstract class Active extends GameAction {
 
     public Active(){ }
 
-    public BoxbotObservation getObservation() {
+    public BoxBotObservation getObservation() {
         return this.parsedResponse.observation;
     }
 

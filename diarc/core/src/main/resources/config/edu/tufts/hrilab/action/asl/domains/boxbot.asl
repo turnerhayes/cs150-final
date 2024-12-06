@@ -2,10 +2,25 @@
     edu.tufts.hrilab.fol.Variable !x;
     edu.tufts.hrilab.fol.Predicate !pred;
 
-    obs:is_holding_box(?actor);
-    obs:can_grab_box(?actor);
+    obs:isHoldingBox(?actor);
+    obs:canGrabBox(?actor);
 
     op:log(info, "Finished observing for ?actor");
+}
+
+() = testBoxBotAction[""]() {
+    java.lang.Boolean !val;
+    
+    edu.tufts.hrilab.fol.Predicate !query;
+    op: log(info, "testBoxBotAction");
+    !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "northOfBox()");
+    
+    op: log(info, "about to loop");
+    while(obs:!query) {
+        op: log(info, "in loop...");
+    }
+
+    op: log(info, "done");
 }
 
 () = moveToBox["?actor moves to the box"]() {
@@ -16,23 +31,21 @@
     edu.tufts.hrilab.fol.Predicate !eastQuery;
 
     conditions : {
-        pre obs : not(is_holding_box(?actor));
-        pre obs : not(can_grab_box(?actor));
-        pre obs : not(is_in_pickup_range(?actor));
     }
     effects : {
-        success obs : can_grab_box(?actor);
     }
 
     op: log(info, ">> moving to box");
 
-    !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "can_grab_box(?actor)");
-    !northQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "north_of(?actor, ?box)");
-    !southQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "south_of(?actor, ?box)");
-    !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "west_of(?actor, ?box)");
-    !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "east_of(?actor, ?box)");
+    !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "isInPickupRangeObs()");
+    !northQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "northOfBox()");
+    !southQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "southOfBox()");
+    !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "westOfBox()");
+    !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfBox()");
 
+    op: log(info, "about to run loop");
     while(~obs:!query) {
+        op: log(info, "running loop");
         if(obs:!northQuery) {
             act:moveDown();
         }
@@ -46,6 +59,7 @@
             act:moveLeft();
         }
     }
+    op: log(info, "Exited loop");
 }
 
 () = moveToSwitch["?actor moves to the light switch"]() {

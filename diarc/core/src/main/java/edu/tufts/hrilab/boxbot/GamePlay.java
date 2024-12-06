@@ -7,7 +7,7 @@ import edu.tufts.hrilab.boxbot.actions.Active;
 
 public class GamePlay {
     SocketConnection sock;
-    BoxbotObservation observation;
+    BoxBotObservation observation;
     
     public GamePlay(int socketPort){
         try {
