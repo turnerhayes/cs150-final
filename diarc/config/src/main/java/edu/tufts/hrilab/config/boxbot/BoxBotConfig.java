@@ -25,7 +25,6 @@ public class BoxBotConfig extends DiarcConfiguration {
   // start the configuration
   @Override
   public void runConfiguration() {
-    createInstance(BoxBotComponent.class);
     createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-endpoint http://vm-llama.eecs.tufts.edu:8080");
     // createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-service openai");
     //createInstance(SimSpeechRecognitionComponent.class, "-config speechinput.simspeech -speaker amitis -addressee boxdropper");
@@ -38,16 +37,13 @@ public class BoxBotConfig extends DiarcConfiguration {
     createInstance(edu.tufts.hrilab.slug.dialogue.DialogueComponent.class);
     createInstance(SimpleNLGComponent.class);
       
-    String[] aslFiles = new String[]{
-      "domains/boxbot.asl",
-    };
-
-    String gmArgs = String.format("-beliefinitfile agents/boxbot.pl " +
+    String gmArgs = "-beliefinitfile agents/boxbot.pl " +
             "-selector edu.tufts.hrilab.action.selector.GoalPlanningActionSelector " +
             "-asl domains/boxbot.asl " +
-            "-goal listen(self)", String.join(" ", aslFiles));
+            "-goal listen(self)";
 
     createInstance(GoalManagerComponent.class, gmArgs);
     log.info("BoxBotConfig successfully loaded with Planner integration.");
+    createInstance(BoxBotComponent.class);
   }
 }
