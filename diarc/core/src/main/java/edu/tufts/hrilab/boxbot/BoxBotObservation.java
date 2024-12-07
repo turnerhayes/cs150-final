@@ -184,42 +184,4 @@ public class BoxBotObservation {
   public boolean is_holding_box() {
     return this.boxbot.is_holding_box;
   }
-
-  
-  @TRADEService
-  @Observes({"isInPickupRangeObs()"})
-  public boolean isInPickupRangeObs() {
-    log.info("IS IN PICKUP RANGE+++++++++++++++++++++++");
-    return false;
-    // return this.isInPickupRange;
-  }
-  
-  @TRADEService
-  @Observes({"westOfBox()"})
-  public boolean westOfBox() {
-    return this.boxbot.position[0] <= this.box.position[0];
-  }
-  
-  
-  @TRADEService
-  @Observes({"eastOfBox()"})
-  public boolean eastOfBox() {
-    return this.boxbot.position[0] + this.boxbot.width >= this.box.position[0] + this.box.width;
-  }
-  
-  @TRADEService
-  @Observes({"northOfBox()"})
-  public List<HashMap<Variable, Symbol>> northOfBox() {
-    log.info("called northOfBox");
-    List<HashMap<Variable, Symbol>> list = new java.util.ArrayList<>();
-    list.add(new HashMap<>());
-    return list;
-    // return this.boxbot.position[1] <= this.box.position[1];
-  }
-  
-  @TRADEService
-  @Observes({"southOfBox()"})
-  public boolean southOfBox() {
-    return this.boxbot.position[1] + this.boxbot.height >= this.box.position[1] + this.box.height;
-  }
 }
