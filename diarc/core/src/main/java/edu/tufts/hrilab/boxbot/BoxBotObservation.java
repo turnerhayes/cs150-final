@@ -146,44 +146,4 @@ public class BoxBotObservation {
   public boolean is_holding_box() {
     return this.boxbot.is_holding_box;
   }
-
-  @TRADEService
-  @Observes({"isInPickupRangeObs(?actor)"})
-  public boolean isInPickupRangeObs(Term t) {
-    log.info("IS IN PICKUP RANGE+++++++++++++++++++++++");
-    return false;
-    // return this.isInPickupRange;
-  }
-  
-  @TRADEService
-  @Observes({"westOfBox(?actor)"})
-  public boolean westOfBox(Term t) {
-    log.info("WEST OF BOX");
-    return this.boxbot.position[0] <= this.box.position[0];
-  }
-  
-  
-  @TRADEService
-  @Observes({"eastOfBox(?actor)"})
-  public boolean eastOfBox(Term t) {
-    log.info("EAST OF BOX");
-    return this.boxbot.position[0] + this.boxbot.width >= this.box.position[0] + this.box.width;
-  }
-  
-  @TRADEService
-  @Observes({"northOfBox(?actor)"})
-  public List<HashMap<Variable, Symbol>> northOfBox(Term t) {
-    log.info("NORTH OF BOX");
-    List<HashMap<Variable, Symbol>> list = new java.util.ArrayList<>();
-    list.add(new HashMap<>());
-    return list;
-    // return this.boxbot.position[1] <= this.box.position[1];
-  }
-  
-  @TRADEService
-  @Observes({"southOfBox(?actor)"})
-  public boolean southOfBox(Term t) {
-    log.info("SOUTH OF BOX");
-    return this.boxbot.position[1] + this.boxbot.height >= this.box.position[1] + this.box.height;
-  }
 }
