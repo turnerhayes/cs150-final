@@ -1,11 +1,7 @@
-import time
-import random
-from typing import Iterable
 from direction import Direction
 import gymnasium as gym
 from player_action import PlayerAction, PlayerActionTable
-from game2 import Game, Observation
-# from game import Game
+from game import Game, Observation
 
 MOVEMENT_ACTIONS = [PlayerAction.UP, PlayerAction.DOWN, PlayerAction.RIGHT, PlayerAction.LEFT]
 
@@ -37,8 +33,12 @@ class SimulatorEnv(gym.Env):
             game.player_move(direction)
         elif action == PlayerAction.TOGGLE_HOLD:
             game.toggle_holding_item()
+        elif action == PlayerAction.GET_OBSERVATION:
+            # This is a no-op; we just want to get the observation
+            pass
         observation = game.observation()
-        self.unwrapped.step_count += 1
+        if action != PlayerAction.GET_OBSERVATION:
+            self.unwrapped.step_count += 1
         if not game.running:
             done = True
         return observation, 0., done, None, None

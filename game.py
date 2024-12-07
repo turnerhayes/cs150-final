@@ -1,170 +1,145 @@
-from typing import Union, Tuple
+from typing import Tuple, Union, TypedDict
+import json
+
+from direction import Direction
 from sprites import Robot, Box
 from shapes import Circle, calculate_overlap_percentage, BoxShape, RobotShape
 from colors import RED, BLACK, WHITE, GRAY
+
 import pygame
 
+Position = Tuple[int, int]
+
+class Observation(TypedDict):
+    isHoldingBox: bool
+    robotPos: Position
+    switchPos: Position
+    isSwitchPressed: bool
+    boxPos: Union[Position, None]
+    isInPickupRange: bool
+    robotWidth: int
+    robotHeight: int
+    boxWidth: int
+    boxHeight: int
+    switchWidth: int
+    switchHeight: int
+
+DIRECTION_VECTOR = {
+    Direction.UP: (0, -1),
+    Direction.DOWN: (0, 1),
+    Direction.RIGHT: (1, 0),
+    Direction.LEFT: (-1, 0)
+}
 
 class Game:
-    # Set screen dimensions
-    WIDTH, HEIGHT = 800, 600
-    
-    # Define box parameters
-    BOX_SIZE = 40
-    BOX_COLOR = RED
-
-    # Define switch parameters
-    SWITCH_SIZE = 20
-    
-    # Robot pickup range
-    PICKUP_RANGE = 50
-
-    # Define robot parameters
-    ROBOT_SIZE = 50
-    ROBOT_SPEED = 5
-
-    # Define doorway parameters
-    DOORWAY_WIDTH = 100
-    DOORWAY_HEIGHT = 100
-    DOORWAY_POS = (0, HEIGHT // 2 - DOORWAY_HEIGHT // 2)
-    
-    # Define fonts
-    FONT = pygame.font.Font(None, 36)
-    
     def __init__(self) -> None:
-        self.switch_pressed = False
-        self.box_held_by_robot = False
+        self.robot_speed = 5
+        self.pickup_range = 50
+        self.wall_width = 10
+        self.box_size = 40
+        self.robot_size = 50
+        self.switch_size = 20
         self._box: Union[Box, None] = None
         self._robot: Union[Robot, None] = None
-        self.switch = Circle(center=(Game.WIDTH - 100, Game.HEIGHT - 100), radius=Game.SWITCH_SIZE)
-        self.screen = pygame.display.set_mode((Game.WIDTH, Game.HEIGHT))
-        self.box_pos = (Game.WIDTH // 2, Game.HEIGHT // 2)
-        self.robot_pos: Tuple[int, int] = (Game.WIDTH // 4, Game.HEIGHT // 2)
-
-        # Game clock
-        self.clock = pygame.time.Clock()
+        
+        self.is_holding_box = False
+        
+        # Set screen dimensions
+        self.width, self.height = 800, 600
+        self.robot_pos: Position = (self.width // 4, self.height // 2)
+        self.switch_pos = (self.width - 100, self.height - 100)
+        self.box_pos = (self.width // 2, self.height // 2)
+        
+        self.switch = Circle(center=self.switch_pos, radius=self.switch_size)
+        
+        # Define doorway parameters
+        self.doorway_width = 100
+        self.doorway_height = 100
+        self.doorway_pos = (0, self.height // 2 - self.height // 2)
+        
         self.running = False
-    
-    """
-    Getter for the box sprite. This is used in place of directly accessing the field
-    because there is a timing issue in constructing the sprite; it seems to depend on some
-    state of Pygame being setup so that it can load the image file that does not seem to
-    be true when the Game object is being instantiated (or when its static fields are
-    instantiated).
-    """
-    def _get_box(self):
-        if (not self._box):
-            self._box = Box(Game.BOX_SIZE)
-        return self._box
-    
-    
-    """
-    See #_get_box() for an explanation of this.
-    """
-    def _get_robot(self):
-        if (not self._robot):
-            self._robot = Robot(Game.BOX_SIZE)
-        return self._robot
-    
-    """
-    Begin running the simulation (does the simulation loop). Exits once the
-    simulation is done.
-    """
-    def start(self):
+        
+        pygame.init()
+        pygame.display.set_caption("BoxBot Environment")
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.clock = pygame.time.Clock()
+        # Define fonts
+        self.font = pygame.font.Font(None, 36)
+        
+    def set_up(self) -> None:
         self.running = True
-        while self.running:
-            self.iterate_loop()
-    
-    """
-    Moves the robot left one unit (exact distance determined by
-    Game.ROBOT_SPEED).
-    """
-    def move_left(self):
-        self.robot_pos = (self.robot_pos[0] - Game.ROBOT_SPEED, self.robot_pos[1])
-    
-    """
-    Moves the robot right one unit (exact distance determined by
-    Game.ROBOT_SPEED).
-    """
-    def move_right(self):
-        self.robot_pos = (self.robot_pos[0] + Game.ROBOT_SPEED, self.robot_pos[1])
-    
-    """
-    Moves the robot up one unit (exact distance determined by
-    Game.ROBOT_SPEED).
-    """
-    def move_up(self):
-        self.robot_pos = (self.robot_pos[0], self.robot_pos[1] - Game.ROBOT_SPEED)
-    
-    """
-    Moves the robot down one unit (exact distance determined by
-    Game.ROBOT_SPEED).
-    """
-    def move_down(self):
-        self.robot_pos = (self.robot_pos[0], self.robot_pos[1] + Game.ROBOT_SPEED)
-    
-    """
-    Makes the robot pick up the box if it can.
-    
-    Returns:
-        True if the robot picked up the box, False if it was unable to pick it
-        up for any reason
-    """
-    def grab_item(self):
-        if not self._can_pickup_box():
-            return False
         
-        self.box_held_by_robot = True
-    
-    def release_item(self):
-        if not self.box_held_by_robot:
-            return False
-        
-        self.box_held_by_robot = False
-        return True
+    def update(self) -> None:
+        # Frame rate control
+        self.clock.tick(30)
 
-    def _draw_walls(self):
+        self._draw_background()
+
+        self._draw_walls()
+        
+        self._draw_switch()
+        
+        self._draw_robot()
+
+        self._draw_box()
+
+        self._draw_status_text()
+        
+
+        # Update display
+        pygame.display.flip()
+        
+    def _draw_background(self) -> None:
+        # Drawing background (change based on light)
+        light_on = not self.is_box_on_switch()
+        if light_on:
+            self.screen.fill(WHITE)
+        else:
+            self.screen.fill(GRAY)
+
+    def _draw_walls(self) -> None:
         # Draw the walls (except for the doorway)
-        pygame.draw.rect(self.screen, BLACK, (0, 0, Game.WIDTH, 10))  # Top wall
-        pygame.draw.rect(self.screen, BLACK, (0, Game.HEIGHT - 10, Game.WIDTH, 10))  # Bottom wall
-        pygame.draw.rect(self.screen, BLACK, (Game.WIDTH - 10, 0, 10, Game.HEIGHT))  # Right wall
+        pygame.draw.rect(self.screen, BLACK, (0, 0, self.width, self.wall_width))  # Top wall
+        pygame.draw.rect(self.screen, BLACK, (0, self.height - self.wall_width, self.width, self.wall_width))  # Bottom wall
+        pygame.draw.rect(self.screen, BLACK, (self.width - self.wall_width, 0, self.wall_width, self.height))  # Right wall
         
         # Draw the doorway
-        pygame.draw.rect(self.screen, BLACK, (0, 0, 10, self.DOORWAY_POS[1]))  # Left wall above doorway
+        pygame.draw.rect(self.screen, BLACK, (0, 0, self.wall_width, self.doorway_pos[1]))  # Left wall above doorway
         pygame.draw.rect(
             self.screen,
             BLACK,
             (
                 0,
-                self.DOORWAY_POS[1] + self.DOORWAY_HEIGHT,
-                10,
-                Game.HEIGHT - (self.DOORWAY_POS[1] + self.DOORWAY_HEIGHT)
+                self.doorway_pos[1] + self.doorway_height,
+                self.wall_width,
+                self.height - (self.doorway_pos[1] + self.doorway_height)
             )
         )  # Left wall below doorway
-
-    """
-    Determines whether the box is currently on top of the switch (and not
-    being held by the robot)
     
-    Returns:
-        True if the box is on top of the switch and not being held, False
-        otherwise
-    """
-    def is_box_on_switch(self):
+    def _draw_robot(self) -> None:
+        # Draw the robot
+        robot = self._get_robot()
+        self.screen.blit(robot.image, (self.robot_pos[0], self.robot_pos[1]), robot.rect)
+        
+    def _draw_box(self) -> None:
+        if self.is_holding_box:
+            self.box_pos = (self.robot_pos[0] + self.robot_size, self.robot_pos[1])
+        # Draw the box
         box = self._get_box()
-        if self.box_held_by_robot:
-            return False
-        overlap = calculate_overlap_percentage(
-            self.switch,
-            BoxShape(
-                box=box,
-                topLeft=self.box_pos
-            )
-        ) >= 40
-        return overlap
+        self.screen.blit(box.image, self.box_pos, box.rect)
+        
+    def _draw_switch(self) -> None:
+        # Draw the switch
+        pygame.draw.circle(self.screen, BLACK, self.switch["center"], self.switch["radius"])
+    
+    def _draw_status_text(self) -> None:
+        light_on = not self.is_box_on_switch()
+        # Display status
+        status_text = self.font.render(f"Lights {'ON' if light_on else 'OFF'}", True, BLACK if light_on else WHITE)
+        self.screen.blit(status_text, (10, 10))
 
-    def _can_pickup_box(self):
-        if self.box_held_by_robot:
+    def _can_pickup_box(self) -> bool:
+        if self.is_holding_box:
             return False
         
         box = self._get_box()
@@ -176,7 +151,7 @@ class Game:
                     self.box_pos[0] + box.rect.width // 2,
                     self.box_pos[1] + box.rect.height // 2
                 ),
-                radius=Game.PICKUP_RANGE
+                radius=self.pickup_range
             ),
             RobotShape(
                 robot=robot,
@@ -184,90 +159,137 @@ class Game:
             )
         )
         return overlap_pickup > 0
+    
+    def player_move(self, action: Direction) -> None:
+        (x1, y1) = DIRECTION_VECTOR[action]
 
-    def _handle_space_pressed(self):
-        if self.box_held_by_robot:
-            # Drop the box if spacebar is pressed again
-            self.release_item()     
+        self.move_robot([self.robot_speed * x1, self.robot_speed * y1])
+        
+    """
+    Makes the robot pick up the box if it can.
+    
+    Returns:
+        True if the robot picked up the box, False if it was unable to pick it
+        up for any reason
+    """
+    def grab_item(self) -> bool:
+        if not self._can_pickup_box():
+            return False
+        
+        self.is_holding_box = True
+        return True
+    
+    def release_item(self) -> bool:
+        if not self.is_holding_box:
+            return False
+        
+        self.is_holding_box = False
+        return True
+    
+    def toggle_holding_item(self) -> bool:
+        if self.is_holding_box:
+            return self.release_item()
         else:
-            # Check if robot is near the box and can pick it up or drop it
-            self.grab_item()
+            return self.grab_item()
+    
+    def collide(self, pos: Position) -> bool:
+        robot = self._get_robot()
+        box = self._get_box()
+        
+        if not self.is_holding_box:
+            if calculate_overlap_percentage(
+                RobotShape(
+                    robot=robot,
+                    topLeft=pos
+                ),
+                BoxShape(
+                    box=box,
+                    topLeft=self.box_pos
+                )
+            ) > 0:
+                print("robot overlaps box")
+                return True
+        return False
+    
+    def hits_wall(self, pos: Position) -> bool:
+        robot_left = self.robot_pos[0]
+        robot_right = self.robot_pos[0] + self.robot_size
+        
+        if self.is_holding_box:
+            robot_right += self.box_size
+            
 
-        # Check if the box is on the switch
-        if not self.box_held_by_robot and self.is_box_on_switch():
-            self.switch_pressed = True
-        else:
-            self.switch_pressed = False
+        if robot_left <= self.wall_width:
+            # Hits left wall
+            return True
+        if robot_right >= (self.width - self.wall_width):
+            # Hits right wall
+            return True
+        if pos[1] <= self.wall_width:
+            # Hits top wall
+            return True
+        if pos[1] + self.robot_size >= (self.height - self.wall_width):
+            # Hits bottom wall
+            return True
+        
+        return False
+    
+    # moves player
+    def move_robot(self, position_change) -> None:
+        new_position = (self.robot_pos[0] + position_change[0], self.robot_pos[1] + position_change[1])
+
+        if self.collide(new_position) or self.hits_wall(new_position):
+            return
+
+        self.robot_pos = new_position
     
     """
-    Processes the pygame event loop.
+    Getter for the box sprite. This is used in place of directly accessing the field
+    because there is a timing issue in constructing the sprite; it seems to depend on some
+    state of Pygame being setup so that it can load the image file that does not seem to
+    be true when the Game object is being instantiated (or when its static fields are
+    instantiated).
     """
-    def iterate_loop(self):
-        # Key press logic for robot movement
-        keys = pygame.key.get_pressed()
-                
-        if keys[pygame.K_LEFT]:
-            self.move_left()
-        if keys[pygame.K_RIGHT]:
-            self.move_right()
-        if keys[pygame.K_UP]:
-            self.move_up()
-        if keys[pygame.K_DOWN]:
-            self.move_down()
+    def _get_box(self) -> Box:
+        if (not self._box):
+            self._box = Box(self.box_size)
+        return self._box
+    
+    """
+    See #_get_box() for an explanation of this.
+    """
+    def _get_robot(self) -> Robot:
+        if (not self._robot):
+            self._robot = Robot(self.robot_size)
+        return self._robot
 
-        # Check boundaries (walls)
-        # Left wall with doorway
-        if (self.robot_pos[0] < 0 and
-            not (self.DOORWAY_POS[1] <= self.robot_pos[1] <= self.DOORWAY_POS[1] + self.DOORWAY_HEIGHT)):
-            self.robot_pos = (0, self.robot_pos[1])
-
-        # Top and bottom walls
-        if self.robot_pos[1] < 0:
-            self.robot_pos = (self.robot_pos[0], 0)
-        if self.robot_pos[1] > Game.HEIGHT - Game.ROBOT_SIZE:
-            self.robot_pos = (self.robot_pos[0], Game.HEIGHT - Game.ROBOT_SIZE)
-
-        # Right wall
-        if self.robot_pos[0] > Game.WIDTH - Game.ROBOT_SIZE:
-            self.robot_pos = (Game.WIDTH - Game.ROBOT_SIZE, self.robot_pos[1])
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self._handle_space_pressed()
-
-        # Drawing background (change based on light)
-        light_on = not self.switch_pressed
-        if light_on:
-            self.screen.fill(WHITE)
-        else:
-            self.screen.fill(GRAY)
-
-        self._draw_walls()
-
-        # Draw the switch
-        pygame.draw.circle(self.screen, BLACK, self.switch["center"], self.switch["radius"])
-
-        # Draw the robot
-        robot = self._get_robot()
-        self.screen.blit(robot.image, (self.robot_pos[0], self.robot_pos[1]), robot.rect)
-
-        if self.box_held_by_robot:
-            self.box_pos = (self.robot_pos[0] + Game.ROBOT_SIZE, self.robot_pos[1])
-        # Draw the box
+    """
+    Determines whether the box is currently on top of the switch (and not
+    being held by the robot)
+    
+    Returns:
+        True if the box is on top of the switch and not being held, False
+        otherwise
+    """
+    def is_box_on_switch(self) -> bool:
         box = self._get_box()
-        self.screen.blit(box.image, self.box_pos, box.rect)
-
-        # Display status
-        status_text = Game.FONT.render(f"Lights {'ON' if light_on else 'OFF'}", True, BLACK if light_on else WHITE)
-        self.screen.blit(status_text, (10, 10))
-
-        # Update display
-        pygame.display.flip()
-
-        # Frame rate control
-        self.clock.tick(30)
-
+        if self.is_holding_box:
+            return False
+        overlap = calculate_overlap_percentage(
+            self.switch,
+            BoxShape(
+                box=box,
+                topLeft=self.box_pos
+            )
+        ) >= 40
+        return overlap
+    
+    def observation(self) -> Observation:
+        return Observation({
+            "isHoldingBox": self.is_holding_box,
+            "robotPos": self.robot_pos,
+            "switchPos": self.switch_pos,
+            "boxPos": None if self.is_holding_box else self.box_pos,
+            "isSwitchPressed": self.is_box_on_switch(),
+            "isInPickupRange": self._can_pickup_box(),
+        })

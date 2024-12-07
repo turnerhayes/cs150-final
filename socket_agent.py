@@ -9,7 +9,7 @@ from utils import recv_socket_data
 
 if __name__ == "__main__":
     # Make the env
-    action_commands = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOGGLE_HOLD']
+    action_commands = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOGGLE_HOLD', 'GET_OBSERVATION']
 
     print("action_commands: ", action_commands)
 

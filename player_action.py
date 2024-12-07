@@ -1,4 +1,4 @@
-from enum import Enum, IntEnum
+from enum import IntEnum
 
 
 class PlayerAction(IntEnum):
@@ -6,7 +6,8 @@ class PlayerAction(IntEnum):
     DOWN = 2,
     RIGHT = 3,
     LEFT = 4,
-    TOGGLE_HOLD = 5
+    TOGGLE_HOLD = 5,
+    GET_OBSERVATION = 6,
 
 PlayerActionTable = {
     "UP" : PlayerAction.UP,
@@ -14,4 +15,5 @@ PlayerActionTable = {
     "RIGHT" : PlayerAction.RIGHT,
     "LEFT" : PlayerAction.LEFT,
     "TOGGLE_HOLD": PlayerAction.TOGGLE_HOLD,
+    "GET_OBSERVATION": PlayerAction.GET_OBSERVATION,
 }

@@ -10,7 +10,7 @@ from env import SimulatorEnv
 
 import pygame
 
-ACTION_COMMANDS = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOGGLE_HOLD']
+ACTION_COMMANDS = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOGGLE_HOLD', 'GET_OBSERVATION']
 
 def serialize_data(data):
     if isinstance(data, set):
@@ -169,6 +169,7 @@ if __name__ == "__main__":
                         sent = sock.send(data.outb)  # Should be ready to write
                         data.outb = data.outb[sent:]
         if should_perform_action and curr_action is not None:
+            print("Taking action: ", PlayerAction(curr_action).name)
             obs, reward, done, info, violations = env.step(curr_action)
             for key, mask, command in e:
                 json_to_send = get_action_json(command, env, obs, reward, done, info)
@@ -177,7 +178,9 @@ if __name__ == "__main__":
                 #data.outb = str.encode(json.dumps(json_to_send) + "\n")
 
                 # Serialize the data to ensure it's JSON-serializable
-                json_to_send_serialized = serialize_data(json_to_send)                
-                data.outb = str.encode(json.dumps(json_to_send_serialized) + "\n")
+                json_to_send_serialized = serialize_data(json_to_send)   
+                json_encoded = str.encode(json.dumps(json_to_send_serialized) + "\n")             
+                print("sending JSON: ", json_encoded)
+                data.outb = json_encoded
             env.render()
     sock_agent.close()

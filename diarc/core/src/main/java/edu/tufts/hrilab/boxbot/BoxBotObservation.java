@@ -12,6 +12,7 @@ import ai.thinkingrobots.trade.TRADEService;
 import edu.tufts.hrilab.action.annotations.Observes;
 import edu.tufts.hrilab.fol.Symbol;
 import edu.tufts.hrilab.fol.Variable;
+import java.lang.StringBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,43 @@ public class BoxBotObservation {
   public static boolean overlap(double x1, double y1, double width1, double height1,
                                 double x2, double y2, double width2, double height2) {
     return !(x1 > x2 + width2 || x2 > x1 + width1 || y1 > y2 + height2 || y2 > y1 + height1);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+
+    builder.append('{');
+    builder.append("isHoldingBox: ");
+    builder.append(this.isHoldingBox);
+    builder.append(", ");
+    builder.append("isInPickupRange: ");
+    builder.append(this.isInPickupRange);
+    builder.append(", ");
+    builder.append("isSwitchPressed: ");
+    builder.append(this.isSwitchPressed);
+    builder.append(", ");
+    builder.append("robotPos: [");
+    builder.append(this.robotPos[0]);
+    builder.append(", ");
+    builder.append(this.robotPos[1]);
+    builder.append("]");
+    builder.append(", ");
+    builder.append("switchPos: [");
+    builder.append(this.switchPos[0]);
+    builder.append(", ");
+    builder.append(this.switchPos[1]);
+    builder.append("]");
+    builder.append(", ");
+    builder.append("boxPos: [");
+    builder.append(this.boxPos[0]);
+    builder.append(", ");
+    builder.append(this.boxPos[1]);
+    builder.append("]");
+    builder.append(", ");
+    builder.append('}');
+
+    return builder.toString();
   }
 
   @Override
@@ -172,6 +210,7 @@ public class BoxBotObservation {
   @TRADEService
   @Observes({"northOfBox()"})
   public List<HashMap<Variable, Symbol>> northOfBox() {
+    log.info("called northOfBox");
     List<HashMap<Variable, Symbol>> list = new java.util.ArrayList<>();
     list.add(new HashMap<>());
     return list;

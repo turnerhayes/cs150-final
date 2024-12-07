@@ -2,12 +2,16 @@ package edu.tufts.hrilab.boxbot;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.tufts.hrilab.socket.SocketConnection;
 import edu.tufts.hrilab.boxbot.actions.Active;
 
 public class GamePlay {
     SocketConnection sock;
     BoxBotObservation observation;
+    private static final Logger log = LoggerFactory.getLogger(GamePlay.class);
     
     public GamePlay(int socketPort){
         try {
@@ -24,5 +28,6 @@ public class GamePlay {
         action.insertResponse(response);
 
         this.observation = ((Active)action).getObservation();
+        log.info("New observation: {}", this.observation);
     }
 }
