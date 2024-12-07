@@ -10,6 +10,6 @@ public class Up extends Active {
 
     @Override
     public String getCommand() {
-        return "NORTH";
+        return "UP";
     }
 }

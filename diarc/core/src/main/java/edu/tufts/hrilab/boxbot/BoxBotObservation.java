@@ -30,6 +30,12 @@ public class BoxBotObservation {
   public int[] robotPos;
   public int[] switchPos;
   public int[] boxPos;
+  public int robotWidth;
+  public int robotHeight;
+  public int boxWidth;
+  public int boxHeight;
+  public int switchWidth;
+  public int switchHeight;
 
   
   public InteractiveObject lightSwitch;
@@ -74,6 +80,24 @@ public class BoxBotObservation {
     builder.append(this.boxPos[1]);
     builder.append("]");
     builder.append(", ");
+    builder.append("robotWidth: ");
+    builder.append(this.robotWidth);
+    builder.append(", ");
+    builder.append("robotHeight: ");
+    builder.append(this.robotHeight);
+    builder.append(", ");
+    builder.append("boxWidth: ");
+    builder.append(this.boxWidth);
+    builder.append(", ");
+    builder.append("boxHeight: ");
+    builder.append(this.boxHeight);
+    builder.append(", ");
+    builder.append("switchWidth: ");
+    builder.append(this.switchWidth);
+    builder.append(", ");
+    builder.append("switchHeight: ");
+    builder.append(this.switchHeight);
+    builder.append(", ");
     builder.append('}');
 
     return builder.toString();
@@ -97,6 +121,12 @@ public class BoxBotObservation {
             .append(this.robotPos, obs.robotPos)
             .append(this.switchPos, obs.switchPos)
             .append(this.boxPos, obs.boxPos)
+            .append(this.robotWidth, obs.robotWidth)
+            .append(this.robotHeight, obs.robotHeight)
+            .append(this.boxWidth, obs.boxWidth)
+            .append(this.boxHeight, obs.boxHeight)
+            .append(this.switchWidth, obs.switchWidth)
+            .append(this.switchHeight, obs.switchHeight)
             .isEquals();
   }
 
@@ -108,6 +138,12 @@ public class BoxBotObservation {
             .append(this.robotPos)
             .append(this.switchPos)
             .append(this.boxPos)
+            .append(this.robotWidth)
+            .append(this.robotHeight)
+            .append(this.boxWidth)
+            .append(this.boxHeight)
+            .append(this.switchWidth)
+            .append(this.switchHeight)
             .hashCode();
   }
   

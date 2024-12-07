@@ -1,5 +1,5 @@
 from typing import Tuple, Union, TypedDict
-import json
+import math
 
 from direction import Direction
 from sprites import Robot, Box
@@ -36,9 +36,12 @@ class Game:
         self.robot_speed = 5
         self.pickup_range = 50
         self.wall_width = 10
-        self.box_size = 40
-        self.robot_size = 50
-        self.switch_size = 20
+        self.box_width = 40
+        self.box_height = math.ceil(59 * (self.box_width/54))
+        self.robot_height = 40
+        self.robot_width = math.ceil(206 * (self.robot_height/188))
+        self.switch_width = 20
+        self.switch_height = self.switch_width
         self._box: Union[Box, None] = None
         self._robot: Union[Robot, None] = None
         
@@ -50,7 +53,7 @@ class Game:
         self.switch_pos = (self.width - 100, self.height - 100)
         self.box_pos = (self.width // 2, self.height // 2)
         
-        self.switch = Circle(center=self.switch_pos, radius=self.switch_size)
+        self.switch = Circle(center=self.switch_pos, radius=self.switch_width)
         
         # Define doorway parameters
         self.doorway_width = 100
@@ -123,7 +126,7 @@ class Game:
         
     def _draw_box(self) -> None:
         if self.is_holding_box:
-            self.box_pos = (self.robot_pos[0] + self.robot_size, self.robot_pos[1])
+            self.box_pos = (self.robot_pos[0] + self.robot_width, self.robot_pos[1])
         # Draw the box
         box = self._get_box()
         self.screen.blit(box.image, self.box_pos, box.rect)
@@ -213,10 +216,10 @@ class Game:
     
     def hits_wall(self, pos: Position) -> bool:
         robot_left = self.robot_pos[0]
-        robot_right = self.robot_pos[0] + self.robot_size
+        robot_right = self.robot_pos[0] + self.robot_width
         
         if self.is_holding_box:
-            robot_right += self.box_size
+            robot_right += self.box_width
             
 
         if robot_left <= self.wall_width:
@@ -228,7 +231,7 @@ class Game:
         if pos[1] <= self.wall_width:
             # Hits top wall
             return True
-        if pos[1] + self.robot_size >= (self.height - self.wall_width):
+        if pos[1] + self.robot_height >= (self.height - self.wall_width):
             # Hits bottom wall
             return True
         
@@ -252,7 +255,7 @@ class Game:
     """
     def _get_box(self) -> Box:
         if (not self._box):
-            self._box = Box(self.box_size)
+            self._box = Box((self.box_width, self.box_height))
         return self._box
     
     """
@@ -260,7 +263,7 @@ class Game:
     """
     def _get_robot(self) -> Robot:
         if (not self._robot):
-            self._robot = Robot(self.robot_size)
+            self._robot = Robot((self.robot_width, self.robot_height))
         return self._robot
 
     """
@@ -285,11 +288,23 @@ class Game:
         return overlap
     
     def observation(self) -> Observation:
+        # self.switch_pos is the center of the switch circle; to get the top
+        # left corner coordinates, we subtract half of each dimension
+        switch_pos = (
+            self.switch_pos[0] - math.ceil(self.switch_width/2),
+            self.switch_pos[1] - math.ceil(self.switch_height/2)
+        )
         return Observation({
             "isHoldingBox": self.is_holding_box,
             "robotPos": self.robot_pos,
-            "switchPos": self.switch_pos,
+            "switchPos": switch_pos,
             "boxPos": None if self.is_holding_box else self.box_pos,
             "isSwitchPressed": self.is_box_on_switch(),
             "isInPickupRange": self._can_pickup_box(),
+            "robotWidth": self.robot_width,
+            "robotHeight": self.robot_height,
+            "switchWidth": self.switch_width,
+            "switchHeight": self.switch_height,
+            "boxWidth": self.box_width,
+            "boxHeight": self.box_height,
         })

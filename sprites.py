@@ -19,21 +19,21 @@ class _SimulationSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 class Robot(_SimulationSprite):
-    def __init__(self, robot_size: int) -> None:
+    def __init__(self, robot_size: Tuple[int, int]) -> None:
         _SimulationSprite.__init__(
             self,
             img_path=os.path.join(os.path.dirname(__file__), "./robot.png"),
             # Image is 188px x 206px; maintain aspect ratio with sortest side
             # set to robot_size 
-            size=(math.ceil(206 * (robot_size/188)), robot_size)
+            size=robot_size
         )
 
 class Box(_SimulationSprite):
-    def __init__(self, box_size: int) -> None:
+    def __init__(self, box_size: Tuple[int, int]) -> None:
         _SimulationSprite.__init__(
             self,
             img_path=os.path.join(os.path.dirname(__file__), "./box.png"),
             # Image is 59px x 54px; maintain aspect ratio with sortest side
             # set to box_size
-            size=(box_size, math.ceil(59 * (box_size/54)))
+            size=box_size
         )

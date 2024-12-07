@@ -93,11 +93,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         }
     }
 
-    private int boxWidth = 40;
-    private int boxHeight = 40;
-    private int robotWidth = 40;
-    private int robotHeight = 40;
-
     @TRADEService
     @Observes({ "northOfBox()" })
     public List<HashMap<Variable, Symbol>> northOfBox(Term term) {
@@ -118,7 +113,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
-        if (this.game.observation.robotPos[1] + this.robotHeight >= this.game.observation.boxPos[1] + this.boxHeight) {
+        if (this.game.observation.robotPos[1] + this.game.observation.robotHeight >= this.game.observation.boxPos[1] + this.game.observation.boxHeight) {
             list.add(new HashMap<>());
         }
         return list;
@@ -131,7 +126,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
-        if (this.game.observation.robotPos[0] + this.robotWidth >= this.game.observation.boxPos[0] + this.boxHeight) {
+        if (this.game.observation.robotPos[0] + this.game.observation.robotWidth >= this.game.observation.boxPos[0] + this.game.observation.boxHeight) {
             list.add(new HashMap<>());
         }
         return list;
@@ -144,9 +139,97 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
-        if (this.game.observation.robotPos[0] <= this.game.observation.boxPos[0]) {
+        if (this.game.observation.robotPos[0] + this.game.observation.robotWidth <= this.game.observation.boxPos[0]) {
             list.add(new HashMap<>());
         }
+        return list;
+    }
+
+    @TRADEService
+    @Observes({ "northOfSwitch()" })
+    public List<HashMap<Variable, Symbol>> northOfSwitch(Term term) {
+        log.info("called northOfSwitch");
+        log.info("term: {}", term);
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
+        log.info("robot top y: {}", this.game.observation.robotPos[1]);
+        log.info("switch top y: {}", this.game.observation.switchPos[1]);
+
+        if (this.game.observation.robotPos[1] <= this.game.observation.switchPos[1]) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+
+    @TRADEService
+    @Observes({ "southOfSwitch()" })
+    public List<HashMap<Variable, Symbol>> southOfSwitch(Term term) {
+        log.info("called southOfSwitch");
+        log.info("term: {}", term);
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
+        log.info("robot top y: {}", this.game.observation.robotPos[1]);
+        log.info("switch top y: {}", this.game.observation.switchPos[1]);
+
+        if (this.game.observation.robotPos[1] >= this.game.observation.switchPos[1]) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+
+    @TRADEService
+    @Observes({ "eastOfSwitch()" })
+    public List<HashMap<Variable, Symbol>> eastOfSwitch(Term term) {
+        log.info("called eastOfSwitch");
+        log.info("term: {}", term);
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
+        log.info("robot left x: {}", this.game.observation.robotPos[0]);
+        log.info("switch right x: {}", this.game.observation.switchPos[0] + this.game.observation.switchWidth);
+
+        if (this.game.observation.robotPos[0] >= this.game.observation.switchPos[0] + this.game.observation.switchWidth) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+
+    @TRADEService
+    @Observes({ "westOfSwitch()" })
+    public List<HashMap<Variable, Symbol>> westOfSwitch(Term term) {
+        log.info("called westOfSwitch");
+        log.info("term: {}", term);
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
+        log.info("robot position x: {}", this.game.observation.robotPos[0]);
+        log.info("robot width: {}", this.game.observation.robotWidth);
+        log.info("robot right x: {}", this.game.observation.robotPos[0] + this.game.observation.robotWidth);
+        log.info("switch left x: {}", this.game.observation.switchPos[0]);
+
+        if (this.game.observation.robotPos[0] + this.game.observation.robotWidth <= this.game.observation.switchPos[0]) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+
+    @TRADEService
+    @Observes({ "isAtSwitch()" })
+    public List<HashMap<Variable, Symbol>> isAtSwitch(Term term) {
+        log.info("called isAtSwitch");
+        log.info("term: {}", term);
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
+        log.info("robot right x: {}", this.game.observation.robotPos[0] + this.game.observation.robotWidth);
+        log.info("switch left x: {}", this.game.observation.switchPos[0]);
+        log.info("robot top y: {}", this.game.observation.robotPos[1]);
+        log.info("switch top y: {}", this.game.observation.switchPos[1]);
+
+        if (
+            this.game.observation.robotPos[0] + this.game.observation.robotWidth == this.game.observation.switchPos[0] &&
+            this.game.observation.robotPos[1] == this.game.observation.switchPos[1]
+        ) {
+            list.add(new HashMap<>());
+        }
+        log.info("\tresult list: {}", list);
         return list;
     }
 
@@ -154,11 +237,12 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @Observes({ "isInPickupRange()" })
     public List<HashMap<Variable, Symbol>> isInPickupRange(Term term) {
         log.info("called isInPickupRange");
-        log.info("term:", term);
+        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
         if (this.game.observation.isInPickupRange) {
             list.add(new HashMap<>());
         }
+        log.info("result list: {}", list);
         return list;
         // return this.game.observation.robotPos[1] <= this.game.observation.boxPos[1];
     }

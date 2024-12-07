@@ -28,6 +28,5 @@ public class GamePlay {
         action.insertResponse(response);
 
         this.observation = ((Active)action).getObservation();
-        log.info("New observation: {}", this.observation);
     }
 }

@@ -43,23 +43,20 @@
     !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "westOfBox()");
     !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfBox()");
 
-    op: log(info, "about to run loop");
     while(~obs:!query) {
-        op: log(info, "running loop");
-        if(obs:!northQuery) {
-            act:moveDown();
-        }
-        elseif(obs:!southQuery) {
-            act:moveUp();
-        }
-        elseif(obs:!westQuery) {
+        if(obs:!westQuery) {
             act:moveRight();
+        }
+        elseif(obs:!northQuery) {
+            act:moveDown();
         }
         elseif(obs:!eastQuery) {
             act:moveLeft();
         }
+        elseif(obs:!southQuery) {
+            act:moveUp();
+        }
     }
-    op: log(info, "Exited loop");
 }
 
 () = moveToSwitch["?actor moves to the light switch"]() {
@@ -70,32 +67,32 @@
     edu.tufts.hrilab.fol.Predicate !eastQuery;
 
     conditions : {
-        pre obs : not(is_at_switch(?actor));
     }
     effects : {
-        success obs : is_at_switch(?actor);
     }
 
     op: log(info, ">> moving to light switch");
 
-    !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "is_at_switch(?actor)");
-    !northQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "north_of(?actor, ?switch)");
-    !southQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "south_of(?actor, ?switch)");
-    !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "west_of(?actor, ?switch)");
-    !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "east_of(?actor, ?switch)");
+    !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "isAtSwitch()");
+    !northQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "northOfSwitch()");
+    !southQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "southOfSwitch()");
+    !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "westOfSwitch()");
+    !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfSwitch()");
 
+    op: log(info, "about to loop");
     while(~obs:!query) {
-        if(obs:!northQuery) {
-            act:moveDown();
-        }
-        elseif(obs:!southQuery) {
-            act:moveUp();
-        }
-        elseif(obs:!westQuery) {
+        op: log(info, "in loop");
+        if(obs:!westQuery) {
             act:moveRight();
+        }
+        elseif(obs:!northQuery) {
+            act:moveDown();
         }
         elseif(obs:!eastQuery) {
             act:moveLeft();
+        }
+        elseif(obs:!southQuery) {
+            act:moveUp();
         }
     }
 }
