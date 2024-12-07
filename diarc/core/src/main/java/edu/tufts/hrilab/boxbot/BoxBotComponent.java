@@ -5,6 +5,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ai.thinkingrobots.trade.TRADEService;
 import ai.thinkingrobots.trade.TRADE;
 import ai.thinkingrobots.trade.TRADEException;
 import ai.thinkingrobots.trade.TRADEServiceConstraints;
@@ -12,12 +13,15 @@ import ai.thinkingrobots.trade.TRADEService;
 import edu.tufts.hrilab.action.annotations.Observes;
 import edu.tufts.hrilab.action.justification.ConditionJustification;
 import edu.tufts.hrilab.action.justification.Justification;
+import edu.tufts.hrilab.action.annotations.Observes;
 import edu.tufts.hrilab.diarc.DiarcComponent;
 import edu.tufts.hrilab.fol.Predicate;
 import edu.tufts.hrilab.fol.Variable;
 import edu.tufts.hrilab.fol.Symbol;
 import edu.tufts.hrilab.fol.Term;
 import edu.tufts.hrilab.fol.Factory;
+import edu.tufts.hrilab.fol.Symbol;
+import edu.tufts.hrilab.fol.Variable;
 import edu.tufts.hrilab.interfaces.BoxBotSimulatorInterface;
 import edu.tufts.hrilab.supermarket.SupermarketObservation;
 import edu.tufts.hrilab.util.Util;
@@ -217,5 +221,44 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         this.updateBeliefs();
         log.info("Action success: {}", action.getSuccess());
         return new ConditionJustification(action.getSuccess());
+    }
+
+    @TRADEService
+    @Observes({"isInPickupRangeObs(?actor)"})
+    public boolean isInPickupRangeObs(Term t) {
+        log.info("IS IN PICKUP RANGE+++++++++++++++++++++++");
+        return false;
+        // return this.isInPickupRange;
+    }
+
+    @TRADEService
+    @Observes({"westOfBox(?actor)"})
+    public boolean westOfBox(Term t) {
+        log.info("WEST OF BOX");
+        return this.boxbot.position[0] <= this.box.position[0];
+    }
+
+    @TRADEService
+    @Observes({"eastOfBox(?actor)"})
+    public boolean eastOfBox(Term t) {
+        log.info("EAST OF BOX");
+        return this.boxbot.position[0] + this.boxbot.width >= this.box.position[0] + this.box.width;
+    }
+
+    @TRADEService
+    @Observes({"northOfBox(?actor)"})
+    public List<HashMap<Variable, Symbol>> northOfBox(Term t) {
+        log.info("NORTH OF BOX");
+        List<HashMap<Variable, Symbol>> list = new java.util.ArrayList<>();
+        list.add(new HashMap<>());
+        return list;
+        // return this.boxbot.position[1] <= this.box.position[1];
+    }
+
+    @TRADEService
+    @Observes({"southOfBox(?actor)"})
+    public boolean southOfBox(Term t) {
+        log.info("SOUTH OF BOX");
+        return this.boxbot.position[1] + this.boxbot.height >= this.box.position[1] + this.box.height;
     }
 }
