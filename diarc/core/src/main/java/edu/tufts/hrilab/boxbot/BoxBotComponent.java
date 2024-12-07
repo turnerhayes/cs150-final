@@ -5,15 +5,19 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ai.thinkingrobots.trade.TRADEService;
 import ai.thinkingrobots.trade.TRADE;
 import ai.thinkingrobots.trade.TRADEException;
 import ai.thinkingrobots.trade.TRADEServiceConstraints;
 import edu.tufts.hrilab.action.justification.ConditionJustification;
 import edu.tufts.hrilab.action.justification.Justification;
+import edu.tufts.hrilab.action.annotations.Observes;
 import edu.tufts.hrilab.diarc.DiarcComponent;
 import edu.tufts.hrilab.fol.Predicate;
 import edu.tufts.hrilab.fol.Term;
 import edu.tufts.hrilab.fol.Factory;
+import edu.tufts.hrilab.fol.Symbol;
+import edu.tufts.hrilab.fol.Variable;
 import edu.tufts.hrilab.interfaces.BoxBotSimulatorInterface;
 import edu.tufts.hrilab.supermarket.SupermarketObservation;
 import edu.tufts.hrilab.util.Util;
@@ -24,6 +28,9 @@ import edu.tufts.hrilab.boxbot.actions.Down;
 import edu.tufts.hrilab.boxbot.actions.ToggleHold;
 
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorInterface {
     protected int socketPort = 9000;
