@@ -43,6 +43,12 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     protected GamePlay game;
     private static final Logger log = LoggerFactory.getLogger(BoxBotComponent.class);
 
+    /**
+     * This number represents how far from the target position the robot can be and be
+     * considered "at the target".
+     */
+    private static final int POSITION_TOLERANCE = 5;
+
     public BoxBotComponent() {
     }
 
@@ -93,11 +99,19 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         }
     }
 
+    private boolean isNorthOfSwitchCenter() {
+        return this.game.observation.robotPos[1] <= this.game.observation.switchPos[1] +
+            Math.floor(this.game.observation.switchHeight/2);
+    }
+
+    private boolean isSouthOfSwitchCenter() {
+        return this.game.observation.robotPos[1] >= this.game.observation.switchPos[1] +
+            Math.floor(this.game.observation.switchHeight/2);
+    }
+
     @TRADEService
     @Observes({ "northOfBox()" })
     public List<HashMap<Variable, Symbol>> northOfBox(Term term) {
-        log.info("called northOfBox");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
         if (this.game.observation.robotPos[1] <= this.game.observation.boxPos[1]) {
@@ -109,8 +123,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @TRADEService
     @Observes({ "southOfBox()" })
     public List<HashMap<Variable, Symbol>> southOfBox(Term term) {
-        log.info("called southOfBox");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
         if (this.game.observation.robotPos[1] + this.game.observation.robotHeight >= this.game.observation.boxPos[1] + this.game.observation.boxHeight) {
@@ -122,8 +134,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @TRADEService
     @Observes({ "eastOfBox()" })
     public List<HashMap<Variable, Symbol>> eastOfBox(Term term) {
-        log.info("called eastOfBox");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
         if (this.game.observation.robotPos[0] + this.game.observation.robotWidth >= this.game.observation.boxPos[0] + this.game.observation.boxHeight) {
@@ -135,8 +145,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @TRADEService
     @Observes({ "westOfBox()" })
     public List<HashMap<Variable, Symbol>> westOfBox(Term term) {
-        log.info("called westOfBox");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
         if (this.game.observation.robotPos[0] + this.game.observation.robotWidth <= this.game.observation.boxPos[0]) {
@@ -148,14 +156,20 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @TRADEService
     @Observes({ "northOfSwitch()" })
     public List<HashMap<Variable, Symbol>> northOfSwitch(Term term) {
-        log.info("called northOfSwitch");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
-        log.info("robot top y: {}", this.game.observation.robotPos[1]);
-        log.info("switch top y: {}", this.game.observation.switchPos[1]);
-
         if (this.game.observation.robotPos[1] <= this.game.observation.switchPos[1]) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+    
+    @TRADEService
+    @Observes({ "northOfSwitchCenter()" })
+    public List<HashMap<Variable, Symbol>> northOfSwitchCenter(Term term) {
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
+        if (isNorthOfSwitchCenter()) {
             list.add(new HashMap<>());
         }
         return list;
@@ -164,14 +178,20 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @TRADEService
     @Observes({ "southOfSwitch()" })
     public List<HashMap<Variable, Symbol>> southOfSwitch(Term term) {
-        log.info("called southOfSwitch");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
-        log.info("robot top y: {}", this.game.observation.robotPos[1]);
-        log.info("switch top y: {}", this.game.observation.switchPos[1]);
+        if (this.game.observation.robotPos[1] >= this.game.observation.switchPos[1] + this.game.observation.switchHeight) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
 
-        if (this.game.observation.robotPos[1] >= this.game.observation.switchPos[1]) {
+    @TRADEService
+    @Observes({ "southOfSwitchCenter()" })
+    public List<HashMap<Variable, Symbol>> southOfSwitchCenter(Term term) {
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
+        if (isSouthOfSwitchCenter()) {
             list.add(new HashMap<>());
         }
         return list;
@@ -180,12 +200,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @TRADEService
     @Observes({ "eastOfSwitch()" })
     public List<HashMap<Variable, Symbol>> eastOfSwitch(Term term) {
-        log.info("called eastOfSwitch");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
-
-        log.info("robot left x: {}", this.game.observation.robotPos[0]);
-        log.info("switch right x: {}", this.game.observation.switchPos[0] + this.game.observation.switchWidth);
 
         if (this.game.observation.robotPos[0] >= this.game.observation.switchPos[0] + this.game.observation.switchWidth) {
             list.add(new HashMap<>());
@@ -196,14 +211,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @TRADEService
     @Observes({ "westOfSwitch()" })
     public List<HashMap<Variable, Symbol>> westOfSwitch(Term term) {
-        log.info("called westOfSwitch");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
-
-        log.info("robot position x: {}", this.game.observation.robotPos[0]);
-        log.info("robot width: {}", this.game.observation.robotWidth);
-        log.info("robot right x: {}", this.game.observation.robotPos[0] + this.game.observation.robotWidth);
-        log.info("switch left x: {}", this.game.observation.switchPos[0]);
 
         if (this.game.observation.robotPos[0] + this.game.observation.robotWidth <= this.game.observation.switchPos[0]) {
             list.add(new HashMap<>());
@@ -211,21 +219,26 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
+    private boolean isApproximatelyAt(int robotPos, int targetPos) {
+        if (robotPos < targetPos - POSITION_TOLERANCE) {
+            return false;
+        }
+
+        if (robotPos > targetPos + POSITION_TOLERANCE) {
+            return false;
+        }
+
+        return true;
+    }
+
     @TRADEService
     @Observes({ "isAtSwitch()" })
     public List<HashMap<Variable, Symbol>> isAtSwitch(Term term) {
-        log.info("called isAtSwitch");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
-        log.info("robot right x: {}", this.game.observation.robotPos[0] + this.game.observation.robotWidth);
-        log.info("switch left x: {}", this.game.observation.switchPos[0]);
-        log.info("robot top y: {}", this.game.observation.robotPos[1]);
-        log.info("switch top y: {}", this.game.observation.switchPos[1]);
-
         if (
-            this.game.observation.robotPos[0] + this.game.observation.robotWidth == this.game.observation.switchPos[0] &&
-            this.game.observation.robotPos[1] == this.game.observation.switchPos[1]
+            isApproximatelyAt(this.game.observation.robotPos[0] + this.game.observation.robotWidth, this.game.observation.switchPos[0]) &&
+            isApproximatelyAt(this.game.observation.robotPos[1], this.game.observation.switchPos[1])
         ) {
             list.add(new HashMap<>());
         }
@@ -236,15 +249,63 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @TRADEService
     @Observes({ "isInPickupRange()" })
     public List<HashMap<Variable, Symbol>> isInPickupRange(Term term) {
-        log.info("called isInPickupRange");
-        log.info("term: {}", term);
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
         if (this.game.observation.isInPickupRange) {
             list.add(new HashMap<>());
         }
-        log.info("result list: {}", list);
         return list;
-        // return this.game.observation.robotPos[1] <= this.game.observation.boxPos[1];
+    }
+
+    @TRADEService
+    @Observes({ "southOfDoorTop()" })
+    public List<HashMap<Variable, Symbol>> southOfDoorTop(Term term) {
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+        
+        log.info("southOfDoorTop()");
+        log.info("robot top y: {}", this.game.observation.robotPos[1]);
+        log.info("door top y: {}", this.game.observation.doorTop + this.game.observation.wallWidth);
+        
+        if (this.game.observation.robotPos[1] >= this.game.observation.doorTop + this.game.observation.wallWidth) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+    
+    @TRADEService
+    @Observes({ "northOfDoorTop()" })
+    public List<HashMap<Variable, Symbol>> northOfDoorTop(Term term) {
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+        
+        log.info("northOfDoorTop()");
+
+        if (this.game.observation.robotPos[1] <= this.game.observation.doorTop + this.game.observation.wallWidth) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+
+    @TRADEService
+    @Observes({ "eastOfDoor()" })
+    public List<HashMap<Variable, Symbol>> eastOfDoor(Term term) {
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+        if (this.game.observation.robotPos[0] > this.game.observation.wallWidth) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+
+    @TRADEService
+    @Observes({ "isAtDoor()" })
+    public List<HashMap<Variable, Symbol>> isAtDoor(Term term) {
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+        if (
+            this.game.observation.robotPos[0] == 0 &&
+            this.game.observation.robotPos[1] <= this.game.observation.doorBottom &&
+            this.game.observation.robotPos[1] >= this.game.observation.doorTop
+        ) {
+            list.add(new HashMap<>());
+        }
+        return list;
     }
 
     @Override
@@ -305,13 +366,5 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         this.updateBeliefs();
         log.info("Action success: {}", action.getSuccess());
         return new ConditionJustification(action.getSuccess());
-    }
-
-    @TRADEService
-    @Observes({"isInPickupRangeObs(?actor)"})
-    public boolean isInPickupRangeObs(Term t) {
-        log.info("IS IN PICKUP RANGE+++++++++++++++++++++++");
-        return false;
-        // return this.isInPickupRange;
     }
 }

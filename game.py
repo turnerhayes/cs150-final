@@ -23,6 +23,9 @@ class Observation(TypedDict):
     boxHeight: int
     switchWidth: int
     switchHeight: int
+    doorTop: int
+    doorBottom: int
+    wallWidth: int
 
 DIRECTION_VECTOR = {
     Direction.UP: (0, -1),
@@ -56,7 +59,6 @@ class Game:
         self.switch = Circle(center=self.switch_pos, radius=self.switch_width)
         
         # Define doorway parameters
-        self.doorway_width = 100
         self.doorway_height = 100
         self.doorway_pos = (0, self.height // 2 - self.height // 2)
         
@@ -307,4 +309,7 @@ class Game:
             "switchHeight": self.switch_height,
             "boxWidth": self.box_width,
             "boxHeight": self.box_height,
+            "doorTop": self.doorway_pos[1],
+            "doorBottom": self.doorway_pos[1] + self.doorway_height,
+            "wallWidth": self.wall_width,
         })

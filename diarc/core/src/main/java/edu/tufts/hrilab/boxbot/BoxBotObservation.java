@@ -36,6 +36,9 @@ public class BoxBotObservation {
   public int boxHeight;
   public int switchWidth;
   public int switchHeight;
+  public int doorTop;
+  public int doorBottom;
+  public int wallWidth;
 
   
   public InteractiveObject lightSwitch;
@@ -98,6 +101,15 @@ public class BoxBotObservation {
     builder.append("switchHeight: ");
     builder.append(this.switchHeight);
     builder.append(", ");
+    builder.append("doorTop: ");
+    builder.append(this.doorTop);
+    builder.append(", ");
+    builder.append("doorBottom: ");
+    builder.append(this.doorBottom);
+    builder.append(", ");
+    builder.append("wallWidth: ");
+    builder.append(this.wallWidth);
+    builder.append(", ");
     builder.append('}');
 
     return builder.toString();
@@ -127,6 +139,9 @@ public class BoxBotObservation {
             .append(this.boxHeight, obs.boxHeight)
             .append(this.switchWidth, obs.switchWidth)
             .append(this.switchHeight, obs.switchHeight)
+            .append(this.doorTop, obs.doorTop)
+            .append(this.doorBottom, obs.doorBottom)
+            .append(this.wallWidth, obs.wallWidth)
             .isEquals();
   }
 
@@ -144,6 +159,9 @@ public class BoxBotObservation {
             .append(this.boxHeight)
             .append(this.switchWidth)
             .append(this.switchHeight)
+            .append(this.doorTop)
+            .append(this.doorBottom)
+            .append(this.wallWidth)
             .hashCode();
   }
   

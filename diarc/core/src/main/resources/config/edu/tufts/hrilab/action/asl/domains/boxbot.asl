@@ -1,28 +1,3 @@
-() = initializeagent[""]() {
-    edu.tufts.hrilab.fol.Variable !x;
-    edu.tufts.hrilab.fol.Predicate !pred;
-
-    obs:isHoldingBox(?actor);
-    obs:canGrabBox(?actor);
-
-    op:log(info, "Finished observing for ?actor");
-}
-
-() = testBoxBotAction[""]() {
-    java.lang.Boolean !val;
-    
-    edu.tufts.hrilab.fol.Predicate !query;
-    op: log(info, "testBoxBotAction");
-    !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "northOfBox()");
-    
-    op: log(info, "about to loop");
-    while(obs:!query) {
-        op: log(info, "in loop...");
-    }
-
-    op: log(info, "done");
-}
-
 () = moveToBox["?actor moves to the box"]() {
     edu.tufts.hrilab.fol.Predicate !query;
     edu.tufts.hrilab.fol.Predicate !northQuery;
@@ -101,33 +76,26 @@
     edu.tufts.hrilab.fol.Predicate !query;
     edu.tufts.hrilab.fol.Predicate !northQuery;
     edu.tufts.hrilab.fol.Predicate !southQuery;
-    edu.tufts.hrilab.fol.Predicate !westQuery;
     edu.tufts.hrilab.fol.Predicate !eastQuery;
 
     conditions : {
-        pre obs : not(is_at_door(?actor));
     }
     effects : {
-        success obs : is_at_door(?actor);
     }
 
     op: log(info, ">> moving to the door");
 
-    !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "is_at_door(?actor)");
-    !northQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "north_of(?actor, ?door)");
-    !southQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "south_of(?actor, ?door)");
-    !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "west_of(?actor, ?door)");
-    !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "east_of(?actor, ?door)");
+    !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "isAtDoor()");
+    !northQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "northOfDoorTop()");
+    !southQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "southOfDoorBottom()");
+    !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfDoor()");
 
     while(~obs:!query) {
-        if(obs:!northQuery) {
-            act:moveDown();
-        }
-        elseif(obs:!southQuery) {
+        if(obs:!southQuery) {
             act:moveUp();
         }
-        elseif(obs:!westQuery) {
-            act:moveRight();
+        elseif(obs:!northQuery) {
+            act:moveDown();
         }
         elseif(obs:!eastQuery) {
             act:moveLeft();
