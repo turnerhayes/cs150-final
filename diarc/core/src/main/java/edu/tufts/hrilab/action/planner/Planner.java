@@ -107,7 +107,7 @@ public abstract class Planner {
       //   "(gotospot spot spotlocation_0 spotlocation_5 room1 room3)\n\n" +
       //   "The domain is defined as follows:\n\n" + domainStr +
       //   "The problem is defined as follows:\n\n" + problemStr;
-      String prompt = "I am a robot that needs to get a plan to accomplish an action. Given a description of the environment and available actions, generate a plan to accomplish the goal. Please only respond with a valid PDDL plan. Do not include explanations or any text that would make it an invalid plan. Each instruction should be on a single line and look similar to the following example:\r\n" + //
+      String prompt = "I am a robot that needs to get a plan to accomplish an action. Given a description of the environment and available actions, generate a plan to accomplish the goal. Please only respond with a valid PDDL plan. Do not include explanations or any text that would make it an invalid plan. Do not wrap it in backticks. Each instruction should be on a single line and look similar to the following example:\r\n" + //
                 "\r\n" + //
                 "(gotospot spot spotlocation_0 spotlocation_5 room1 room3)\r\n" + //
                 "\r\n" + //
