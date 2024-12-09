@@ -242,7 +242,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         ) {
             list.add(new HashMap<>());
         }
-        log.info("\tresult list: {}", list);
         return list;
     }
 
@@ -255,30 +254,30 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         }
         return list;
     }
-
+    
     @TRADEService
-    @Observes({ "southOfDoorTop()" })
-    public List<HashMap<Variable, Symbol>> southOfDoorTop(Term term) {
+    @Observes({ "northOfDoorCenter()" })
+    public List<HashMap<Variable, Symbol>> northOfDoorCenter(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
         
-        log.info("southOfDoorTop()");
-        log.info("robot top y: {}", this.game.observation.robotPos[1]);
-        log.info("door top y: {}", this.game.observation.doorTop + this.game.observation.wallWidth);
-        
-        if (this.game.observation.robotPos[1] >= this.game.observation.doorTop + this.game.observation.wallWidth) {
+        if (
+            this.game.observation.robotPos[1] <= this.game.observation.doorTop +
+                Math.floor((this.game.observation.doorBottom - this.game.observation.doorTop)/2)
+        ) {
             list.add(new HashMap<>());
         }
         return list;
     }
     
     @TRADEService
-    @Observes({ "northOfDoorTop()" })
-    public List<HashMap<Variable, Symbol>> northOfDoorTop(Term term) {
+    @Observes({ "southOfDoorCenter()" })
+    public List<HashMap<Variable, Symbol>> southOfDoorCenter(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
         
-        log.info("northOfDoorTop()");
-
-        if (this.game.observation.robotPos[1] <= this.game.observation.doorTop + this.game.observation.wallWidth) {
+        if (
+            this.game.observation.robotPos[1] >= this.game.observation.doorTop +
+                Math.floor((this.game.observation.doorBottom - this.game.observation.doorTop)/2)
+        ) {
             list.add(new HashMap<>());
         }
         return list;
@@ -288,7 +287,8 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @Observes({ "eastOfDoor()" })
     public List<HashMap<Variable, Symbol>> eastOfDoor(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
-        if (this.game.observation.robotPos[0] > this.game.observation.wallWidth) {
+
+        if (this.game.observation.robotPos[0] > 0) {
             list.add(new HashMap<>());
         }
         return list;
@@ -298,8 +298,9 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     @Observes({ "isAtDoor()" })
     public List<HashMap<Variable, Symbol>> isAtDoor(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
         if (
-            this.game.observation.robotPos[0] == 0 &&
+            this.game.observation.robotPos[0] == this.game.observation.wallWidth &&
             this.game.observation.robotPos[1] <= this.game.observation.doorBottom &&
             this.game.observation.robotPos[1] >= this.game.observation.doorTop
         ) {
@@ -308,63 +309,63 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
+    @TRADEService
+    @Observes({ "canMoveWest()" })
+    public List<HashMap<Variable, Symbol>> canMoveWest(Term term) {
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+        if (
+            this.game.observation.robotPos[0] > this.game.observation.wallWidth
+        ) {
+            list.add(new HashMap<>());
+        }
+        return list;
+    }
+
     @Override
     public Justification getObservation() {
-        log.info("observation action");
         GameAction action = new GetObservation();
         game.perform(action);
         this.updateBeliefs();
-        log.info("Action success: {}", action.getSuccess());
         return new ConditionJustification(action.getSuccess());
     }
 
     @Override
     public Justification moveLeft() {
-        log.info("moveLeft action");
         GameAction action = new Left();
         game.perform(action);
         this.updateBeliefs();
-        log.info("Action success: {}", action.getSuccess());
         return new ConditionJustification(action.getSuccess());
     }
     
     @Override
     public Justification moveRight() {
-        log.info("moveRight action");
         GameAction action = new Right();
         game.perform(action);
         this.updateBeliefs();
-        log.info("Action success: {}", action.getSuccess());
         return new ConditionJustification(action.getSuccess());
     }
     
     @Override
     public Justification moveUp() {
-        log.info("moveUp action");
         GameAction action = new Up();
         game.perform(action);
         this.updateBeliefs();
-        log.info("Action success: {}", action.getSuccess());
         return new ConditionJustification(action.getSuccess());
     }
     
     @Override
     public Justification moveDown() {
-        log.info("moveDown action");
         GameAction action = new Down();
         game.perform(action);
         this.updateBeliefs();
-        log.info("Action success: {}", action.getSuccess());
         return new ConditionJustification(action.getSuccess());
     }
     
     @Override
     public Justification toggleHold() {
-        log.info("toggleHold action");
         GameAction action = new ToggleHold();
         game.perform(action);
         this.updateBeliefs();
-        log.info("Action success: {}", action.getSuccess());
         return new ConditionJustification(action.getSuccess());
     }
 }

@@ -77,6 +77,7 @@
     edu.tufts.hrilab.fol.Predicate !northQuery;
     edu.tufts.hrilab.fol.Predicate !southQuery;
     edu.tufts.hrilab.fol.Predicate !eastQuery;
+    edu.tufts.hrilab.fol.Predicate !canMoveWestQuery;
 
     conditions : {
     }
@@ -86,19 +87,22 @@
     op: log(info, ">> moving to the door");
 
     !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "isAtDoor()");
-    !northQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "northOfDoorTop()");
-    !southQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "southOfDoorBottom()");
+    !northQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "northOfDoorCenter()");
+    !southQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "southOfDoorCenter()");
     !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfDoor()");
+    !canMoveWestQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "canMoveWest()");
 
     while(~obs:!query) {
         if(obs:!southQuery) {
             act:moveUp();
         }
+        elseif(obs:!eastQuery) {
+            if(obs:!canMoveWestQuery) {
+                act:moveLeft();
+            }
+        }
         elseif(obs:!northQuery) {
             act:moveDown();
-        }
-        elseif(obs:!eastQuery) {
-            act:moveLeft();
         }
     }
 }
