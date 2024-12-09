@@ -23,7 +23,6 @@ import edu.tufts.hrilab.fol.Factory;
 import edu.tufts.hrilab.fol.Symbol;
 import edu.tufts.hrilab.fol.Variable;
 import edu.tufts.hrilab.interfaces.BoxBotSimulatorInterface;
-import edu.tufts.hrilab.supermarket.SupermarketObservation;
 import edu.tufts.hrilab.util.Util;
 import edu.tufts.hrilab.boxbot.actions.Left;
 import edu.tufts.hrilab.boxbot.actions.Right;
