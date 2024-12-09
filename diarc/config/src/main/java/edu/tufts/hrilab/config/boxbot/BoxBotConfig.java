@@ -25,7 +25,7 @@ public class BoxBotConfig extends DiarcConfiguration {
   // start the configuration
   @Override
   public void runConfiguration() {
-    createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-endpoint http://vm-llama.eecs.tufts.edu:8080");
+    createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-endpoint http://vm-llama.eecs.tufts.edu:8080 -service llama");
     // createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-service openai");
     //createInstance(SimSpeechRecognitionComponent.class, "-config speechinput.simspeech -speaker amitis -addressee boxdropper");
     //createInstance(SimSpeechProductionComponent.class);
