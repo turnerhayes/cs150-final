@@ -1,11 +1,37 @@
+START-TEMPLATES
+
+%nouns
+THING;{RN; ph ; VAR}, {DN; ph}
+%intransitive verb
+VERBI; {C\AGENT ; #x.?PH($x)}, {C ; ?PH(?ADDRESSEE)}
+%transitive verb
+VERBT; {(C/REF)\AGENT ; #x#y.ph($y)}, {C/REF ; #x.ph($x)}, {((C/ARM)/REF)\AGENT ; #x#y#a.ph($y,$a)}, {(C/ARM)/REF ; #x#a.ph($x,$a)}
+%ditransitive verb with agent arguments
+VERBDTA; {((C/AGENT)/AGENT)\AGENT ; #x#y#z.ph($y,$z)}, {(C/AGENT)/AGENT ; #x#y.ph($x,$y)}
+%transitive verb with direction argument
+%also supports a distance in the given direction
+VERBTD; {((C/VAL)/DIR)\AGENT; #a#x#y.ph($x,$y)}, {(C/VAL)/DIR ; #x#y.ph($x,$y)}, {(C/DIR)\AGENT ; #x#y.ph($y)}, {C/DIR ; #x.ph($x)}
+%ditransitive verb
+VERBDT; {((C/REF)/AGENT)\AGENT ; #x#y#z.ph($y,$z)}, {((S/PP)/REF)\AGENT ; #x#y#z.ph($y,$z)}, {(C/REF)/AGENT ; #x#y.ph($x,$y)}
+%addressing actors by name
+ADDRESSABLE; {G/G, S/S, C/C, QYN/QYN, QWH/QWH, G\G, S\S, C\C, QYN\QYN, QWH\QWH; #x.directAddress(ph,$x)}, {AGENT ; ph}
+
+END-TEMPLATES
+
+%%%%
+
 % Define specific terms for your robot
 box; N ; box
 switch; N; switch
-lights; N; lights 
+%lights; N; lights 
+%turn off; VERBT; turnOff
 
 boxbot; ADDRESSABLE; boxbot
 
 % Add an entry to directly handle "go to box"
 go to box; C ; moveToBox(?ADDRESSEE)
 go to switch; C ; moveToSwitch(?ADDRESSEE)
+go to door; C ; moveToDoor(?ADDRESSEE)
 hold; C ; toggleHold(?ADDRESSEE)
+
+turn off lights; VERBI ; turnOffLights
