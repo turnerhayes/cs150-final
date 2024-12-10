@@ -6,8 +6,13 @@
     edu.tufts.hrilab.fol.Predicate !eastQuery;
 
     conditions : {
+        pre infer: ~atBox();
     }
     effects : {
+        success: atBox();
+        success: isInPickupRange();
+        success: ~atSwitch();
+        success: ~atDoor();
     }
 
     op: log(info, ">> moving to box");
@@ -34,6 +39,29 @@
     }
 }
 
+() = pickUpBox["?actor picks up the box"]() {
+    conditions: {
+        pre: isInPickupRange();
+        pre: ~isHoldingBox();
+    }
+    effects: {
+        success: isHoldingBox();
+    }
+
+    act: toggleHold;
+}
+
+() = putDownBox["?actor puts down the box"]() {
+    conditions: {
+        pre: isHoldingBox();
+    }
+    effects: {
+        success: ~isHoldingBox();
+    }
+
+    act: toggleHold;
+}
+
 () = moveToSwitch["?actor moves to the light switch"]() {
     edu.tufts.hrilab.fol.Predicate !query;
     edu.tufts.hrilab.fol.Predicate !northQuery;
@@ -42,8 +70,12 @@
     edu.tufts.hrilab.fol.Predicate !eastQuery;
 
     conditions : {
+        pre : ~atSwitch();
     }
     effects : {
+        success : atSwitch();
+        success : ~atBox();
+        success : ~atDoor();
     }
 
     op: log(info, ">> moving to light switch");
@@ -80,8 +112,12 @@
     edu.tufts.hrilab.fol.Predicate !canMoveWestQuery;
 
     conditions : {
+        pre : ~atDoor();
     }
     effects : {
+        success : atDoor();
+        success : ~atSwitch();
+        success : ~atBox();
     }
 
     op: log(info, ">> moving to the door");

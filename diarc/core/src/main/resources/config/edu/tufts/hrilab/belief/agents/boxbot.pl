@@ -8,9 +8,6 @@ team(self).
 memberOf(X,X).
 memberOf(boxbot, self).
 
-% not(isHoldingBox(self)).
-% not(isInPickupRange(self)).
-% not(isSwitchPressed(self)).
 
 object(boxbot, agent).
 object(self, agent).

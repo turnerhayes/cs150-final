@@ -60,42 +60,42 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     }
 
     protected void updateBeliefs() {
-        BoxBotObservation obs = this.game.observation;
+        // BoxBotObservation obs = this.game.observation;
 
-        if (obs == null) {
-            return;
-        }
+        // if (obs == null) {
+        //     return;
+        // }
 
-        Set<Term> toSubmit = new HashSet<>();
+        // Set<Term> toSubmit = new HashSet<>();
 
-        if (obs.isHoldingBox) {
-            toSubmit.add(Factory.createPredicate("isHoldingBox(self)"));
-        } else {
-            toSubmit.add(Factory.createNegatedPredicate("isHoldingBox(self)"));
-        }
+        // if (obs.isHoldingBox) {
+        //     toSubmit.add(Factory.createPredicate("isHoldingBox(self)"));
+        // } else {
+        //     toSubmit.add(Factory.createNegatedPredicate("isHoldingBox(self)"));
+        // }
 
-        if (obs.isInPickupRange) {
-            toSubmit.add(Factory.createPredicate("isInPickupRange(self)"));
-        } else {
-            toSubmit.add(Factory.createNegatedPredicate("isInPickupRange(self)"));
-        }
+        // if (obs.isInPickupRange) {
+        //     toSubmit.add(Factory.createPredicate("isInPickupRange(self)"));
+        // } else {
+        //     toSubmit.add(Factory.createNegatedPredicate("isInPickupRange(self)"));
+        // }
 
-        if (obs.isSwitchPressed) {
-            toSubmit.add(Factory.createPredicate("isSwitchPressed(self)"));
-        } else {
-            toSubmit.add(Factory.createNegatedPredicate("isSwitchPressed(self)"));
-        }
+        // if (obs.isSwitchPressed) {
+        //     toSubmit.add(Factory.createPredicate("isSwitchPressed(self)"));
+        // } else {
+        //     toSubmit.add(Factory.createNegatedPredicate("isSwitchPressed(self)"));
+        // }
 
-        // toSubmit.add(Factory.createVariable("ROBOTPOS", "location"));
+        // // toSubmit.add(Factory.createVariable("ROBOTPOS", "location"));
 
-        if (!toSubmit.isEmpty()) {
-            try {
-                TRADE.getAvailableService(new TRADEServiceConstraints().name("assertBeliefs").argTypes(Set.class))
-                        .call(void.class, toSubmit);
-            } catch (TRADEException e) {
-                log.error("assertBeliefs not found", e);
-            }
-        }
+        // if (!toSubmit.isEmpty()) {
+        //     try {
+        //         TRADE.getAvailableService(new TRADEServiceConstraints().name("assertBeliefs").argTypes(Set.class))
+        //                 .call(void.class, toSubmit);
+        //     } catch (TRADEException e) {
+        //         log.error("assertBeliefs not found", e);
+        //     }
+        // }
     }
 
     private boolean isNorthOfSwitchCenter() {
