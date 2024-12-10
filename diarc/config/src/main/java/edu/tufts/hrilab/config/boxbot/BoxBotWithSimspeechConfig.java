@@ -26,24 +26,23 @@ public class BoxBotWithSimspeechConfig extends DiarcConfiguration {
   @Override
   public void runConfiguration() {
     createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-endpoint http://vm-llama.eecs.tufts.edu:8080 -service llama");
-    // createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-service openai");
-    //createInstance(SimSpeechRecognitionComponent.class, "-config speechinput.simspeech -speaker amitis -addressee boxdropper");
+    //createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-service openai");
+    createInstance(SimSpeechRecognitionComponent.class, "-config boxbot.simspeech -speaker amitis -addressee boxbot");
     createInstance(SimSpeechProductionComponent.class);
-    
-    createInstance(SimSpeechRecognitionComponent.class,
-              "-config boxbot.simspeech -speaker admin -addressee boxbot");
-    createInstance(ListenerComponent.class);
 
-    createInstance(TLDLParserComponent.class, "-dict templatedict.dict templatedictLearned.dict");
+    //createInstance(ListenerComponent.class);
+    createInstance(edu.tufts.hrilab.slug.listen.ListenerComponent.class);
+
+    createInstance(TLDLParserComponent.class, "-dict boxbot.dict templatedict.dict templatedictLearned.dict");
     createInstance(PragmaticsComponent.class, "-pragrules demos.prag");
     createInstance(ReferenceResolutionComponent.class);
     createInstance(edu.tufts.hrilab.slug.dialogue.DialogueComponent.class);
     createInstance(SimpleNLGComponent.class);
       
-    String gmArgs = "-beliefinitfile agents/boxbot.pl " +
-            "-selector edu.tufts.hrilab.action.selector.GoalPlanningActionSelector " +
-            "-asl domains/boxbot.asl dialogue/nlg.asl dialogue/handleSemantics.asl dialogue/nlu.asl " +
-            "-goal listen(self)";
+    String gmArgs = "-beliefinitfile agents/boxbot.pl demos.pl " +
+        "-selector edu.tufts.hrilab.action.selector.GoalPlanningActionSelector " +
+        "-asl domains/boxbot.asl core.asl vision.asl dialogue/nlg.asl dialogue/handleSemantics.asl dialogue/nlu.asl " +
+        "-goal listen(self)";
 
     createInstance(GoalManagerComponent.class, gmArgs);
     log.info("BoxBotConfig successfully loaded with Planner integration.");
