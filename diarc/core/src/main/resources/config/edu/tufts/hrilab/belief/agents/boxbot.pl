@@ -1,6 +1,8 @@
 name(self,boxbot).
 name(boxbot,boxbot).
 
+actor(amitis).
+
 diarcAgent(self).
 diarcAgent(boxbot).
 team(self).
@@ -21,3 +23,5 @@ subtype(box, physical).
 subtype(agent, physical).
 
 admin(admin).
+supervisor(amitis).
+admin(amitis).
