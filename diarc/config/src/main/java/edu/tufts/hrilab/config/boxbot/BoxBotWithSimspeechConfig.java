@@ -19,9 +19,9 @@ import edu.tufts.hrilab.slug.refResolution.ReferenceResolutionComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BoxBotConfig extends DiarcConfiguration {
+public class BoxBotWithSimspeechConfig extends DiarcConfiguration {
 
-  protected static Logger log = LoggerFactory.getLogger(BoxBotConfig.class);
+  protected static Logger log = LoggerFactory.getLogger(BoxBotWithSimspeechConfig.class);
     
   // start the configuration
   @Override
