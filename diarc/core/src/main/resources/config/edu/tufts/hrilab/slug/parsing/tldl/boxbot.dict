@@ -1,0 +1,11 @@
+% Define specific terms for your robot
+box; N ; box
+switch; N; switch
+lights; N; lights 
+
+boxbot; ADDRESSABLE; boxbot
+
+% Add an entry to directly handle "go to box"
+go to box; C ; moveToBox(?ADDRESSEE)
+go to switch; C ; moveToSwitch(?ADDRESSEE)
+hold; C ; toggleHold(?ADDRESSEE)
