@@ -26,7 +26,7 @@ public class BoxBotConfig extends DiarcConfiguration {
   @Override
   public void runConfiguration() {
     // createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-endpoint http://vm-llama.eecs.tufts.edu:8080 -service llama");
-    createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-service openai -model gpt-4o");
+    createInstance(edu.tufts.hrilab.llm.LLMComponent.class, "-service openai");
 
     String gmArgs = "-beliefinitfile agents/boxbot.pl " +
             "-selector edu.tufts.hrilab.action.selector.GoalPlanningActionSelector " +
