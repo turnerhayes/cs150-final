@@ -8,6 +8,7 @@ core/src/main/resources/serviceDocumentation.json
 diarcRos/build/
 vision/build/
 vision/src/swig/
+*/bin/
 .idea/
 .vscode/
 .env
