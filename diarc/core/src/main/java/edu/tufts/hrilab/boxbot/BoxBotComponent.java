@@ -214,6 +214,11 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
                 pointIsInArea(newRightX, newTopY, boxLeftX, boxTopY, boxRightX, boxBottomY) ||
                 pointIsInArea(newRightX, newBottomY, boxLeftX, boxTopY, boxRightX, boxBottomY)
             ) {
+                log.info(
+                    "Collision with box detected at bot position {} (box position: {})",
+                    new int[]{newLeftX, newTopY},
+                    new int[]{boxLeftX, boxTopY}
+                );
                 return true;
             }
         }
@@ -225,6 +230,11 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
             pointIsInArea(newRightX, newTopY, switchLeftX, switchTopY, switchRightX, switchBottomY) ||
             pointIsInArea(newRightX, newBottomY, switchLeftX, switchTopY, switchRightX, switchBottomY)
         ) {
+            log.info(
+                "Collision with switch detected at bot position {} (switch position: {})",
+                new int[]{newLeftX, newTopY},
+                new int[]{switchLeftX, switchTopY}
+            );
             return true;
         }
 
@@ -241,6 +251,10 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
                 )
             )
         ) {
+            log.info(
+                "Collision with wall detected at bot position {}",
+                new int[]{newLeftX, newTopY}
+            );
             return true;
         }
 
@@ -255,23 +269,29 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         Symbol directionSymbol = term.getArgs().get(0);
         String direction = directionSymbol.getName();
 
+        log.info("checking {} collision:", direction);
+
         if (direction == "UP") {
             if (checkCollision(0, -1)) {
+                log.info("\twill collide");
                 list.add(new HashMap<>());
             }
         }
         else if (direction == "DOWN") {
             if (checkCollision(0, 1)) {
+                log.info("\twill collide");
                 list.add(new HashMap<>());
             }
         }
         else if (direction == "LEFT") {
             if (checkCollision(-1, 0)) {
+                log.info("\twill collide");
                 list.add(new HashMap<>());
             }
         }
         else if (direction == "RIGHT") {
             if (checkCollision(1, 0)) {
+                log.info("\twill collide");
                 list.add(new HashMap<>());
             }
         }
