@@ -32,6 +32,7 @@ public class BoxBotObservation {
   public int[] boxPos;
   public int robotWidth;
   public int robotHeight;
+  public int robotSpeed;
   public int boxWidth;
   public int boxHeight;
   public int switchWidth;
@@ -89,6 +90,9 @@ public class BoxBotObservation {
     builder.append("robotHeight: ");
     builder.append(this.robotHeight);
     builder.append(", ");
+    builder.append("robotSpeed: ");
+    builder.append(this.robotSpeed);
+    builder.append(", ");
     builder.append("boxWidth: ");
     builder.append(this.boxWidth);
     builder.append(", ");
@@ -135,6 +139,7 @@ public class BoxBotObservation {
             .append(this.boxPos, obs.boxPos)
             .append(this.robotWidth, obs.robotWidth)
             .append(this.robotHeight, obs.robotHeight)
+            .append(this.robotSpeed, obs.robotSpeed)
             .append(this.boxWidth, obs.boxWidth)
             .append(this.boxHeight, obs.boxHeight)
             .append(this.switchWidth, obs.switchWidth)
@@ -155,6 +160,7 @@ public class BoxBotObservation {
             .append(this.boxPos)
             .append(this.robotWidth)
             .append(this.robotHeight)
+            .append(this.robotSpeed)
             .append(this.boxWidth)
             .append(this.boxHeight)
             .append(this.switchWidth)

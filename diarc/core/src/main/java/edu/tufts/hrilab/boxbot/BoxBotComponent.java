@@ -191,8 +191,8 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         BoxBotObservation observation = this.game.observation;
         int robotX = observation.robotPos[0];
         int robotY = observation.robotPos[1];
-        int newLeftX = robotX + xOffset;
-        int newTopY = robotY + yOffset;
+        int newLeftX = robotX + (xOffset * observation.robotSpeed);
+        int newTopY = robotY + (yOffset * observation.robotSpeed);
         int newRightX = newLeftX + observation.robotWidth;
         int newBottomY = newTopY + observation.robotHeight;
 

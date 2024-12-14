@@ -19,6 +19,7 @@ class Observation(TypedDict):
     isInPickupRange: bool
     robotWidth: int
     robotHeight: int
+    robotSpeed: int
     boxWidth: int
     boxHeight: int
     switchWidth: int
@@ -306,6 +307,7 @@ class Game:
             "isInPickupRange": self._can_pickup_box(),
             "robotWidth": self.robot_width,
             "robotHeight": self.robot_height,
+            "robotSpeed": self.robot_speed,
             "switchWidth": self.switch_width,
             "switchHeight": self.switch_height,
             "boxWidth": self.box_width,

@@ -89,16 +89,17 @@ public abstract class Planner {
 
     String plan = plan(domain, problem);
     log.info("Goal: {}", goal);
-//     if (plan == null) {
-//       // DEBUG: skip LLM and use dummy plan
-//       plan = """
-// (moveToBox boxbot)
-// (pickUpBox boxbot)
-// (moveToSwitch boxbot)
-// (putDownBox boxbot)
-// (moveToDoor boxbot)
-// """;
-//     }
+    if (plan == null) {
+      // DEBUG: skip LLM and use dummy plan
+      plan = """
+(moveToSwitch boxbot)
+(moveToBox boxbot)
+(pickUpBox boxbot)
+(moveToSwitch boxbot)
+(putDownBox boxbot)
+(moveToDoor boxbot)
+""";
+    }
     if (plan == null) {
       log.error("Planner could not generate a plan. Falling back to LLM.");
 
