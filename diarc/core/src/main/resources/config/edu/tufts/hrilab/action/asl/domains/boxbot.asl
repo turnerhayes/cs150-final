@@ -1,9 +1,15 @@
+import edu.tufts.hrilab.boxbot.Direction;
+import edu.tufts.hrilab.fol.Symbol;
+import edu.tufts.hrilab.fol.Predicate;
+import java.lang.String;
+
+
 () = moveToBox["?actor moves to the box"]() {
-    edu.tufts.hrilab.fol.Predicate !query;
-    edu.tufts.hrilab.fol.Predicate !northQuery;
-    edu.tufts.hrilab.fol.Predicate !southQuery;
-    edu.tufts.hrilab.fol.Predicate !westQuery;
-    edu.tufts.hrilab.fol.Predicate !eastQuery;
+    Predicate !query;
+    Predicate !northQuery;
+    Predicate !southQuery;
+    Predicate !westQuery;
+    Predicate !eastQuery;
 
     conditions : {
         pre infer: ~atBox();
@@ -15,6 +21,16 @@
         success: ~atDoor();
     }
 
+    Symbol !up = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createSymbol", "UP");
+    Symbol !down = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createSymbol", "DOWN");
+    Symbol !left = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createSymbol", "LEFT");
+    Symbol !right = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createSymbol", "RIGHT");
+    Predicate !collideUp = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "willCollide(!up)");
+    Predicate !collideDown = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "willCollide(!down)");
+    Predicate !collideLeft = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "willCollide(!left)");
+    Predicate !collideRight = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "willCollide(!right)");
+
+
     op: log(info, ">> moving to box");
 
     !query = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "isInPickupRange()");
@@ -24,16 +40,16 @@
     !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfBox()");
 
     while(~obs:!query) {
-        if(obs:!westQuery) {
+        if(obs:!westQuery && ~obs:!collideRight) {
             act:moveRight();
         }
-        elseif(obs:!northQuery) {
+        elseif(obs:!northQuery && ~obs:collideDown) {
             act:moveDown();
         }
-        elseif(obs:!eastQuery) {
+        elseif(obs:!eastQuery && ~obs:collideLeft) {
             act:moveLeft();
         }
-        elseif(obs:!southQuery) {
+        elseif(obs:!southQuery && ~obs:collideUp) {
             act:moveUp();
         }
     }
@@ -46,9 +62,26 @@
     }
     effects: {
         success: isHoldingBox();
+        success: isSwitchPressed();
     }
 
     act: toggleHold;
+}
+
+() = fetchBox["?actor goes to box and picks it up"]() {
+    conditions: {
+        pre: ~isHoldingBox();
+        pre: ~atBox();
+    }
+    effects: {
+        success: isHoldingBox();
+        success: atBox();
+        success: ~atSwitch();
+        success: ~atDoor();
+    }
+
+    act: moveToBox();
+    act: pickUpBox();
 }
 
 () = putDownBox["?actor puts down the box"]() {
@@ -57,17 +90,18 @@
     }
     effects: {
         success: ~isHoldingBox();
+        success: isSwitchPressed();
     }
 
     act: toggleHold;
 }
 
 () = moveToSwitch["?actor moves to the light switch"]() {
-    edu.tufts.hrilab.fol.Predicate !query;
-    edu.tufts.hrilab.fol.Predicate !northQuery;
-    edu.tufts.hrilab.fol.Predicate !southQuery;
-    edu.tufts.hrilab.fol.Predicate !westQuery;
-    edu.tufts.hrilab.fol.Predicate !eastQuery;
+    Predicate !query;
+    Predicate !northQuery;
+    Predicate !southQuery;
+    Predicate !westQuery;
+    Predicate !eastQuery;
 
     conditions : {
         pre : ~atSwitch();
@@ -86,30 +120,37 @@
     !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "westOfSwitch()");
     !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfSwitch()");
 
-    op: log(info, "about to loop");
+    Symbol !up = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createSymbol", "UP");
+    Symbol !down = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createSymbol", "DOWN");
+    Symbol !left = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createSymbol", "LEFT");
+    Symbol !right = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createSymbol", "RIGHT");
+    Predicate !collideUp = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "willCollide(!up)");
+    Predicate !collideDown = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "willCollide(!down)");
+    Predicate !collideLeft = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "willCollide(!left)");
+    Predicate !collideRight = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "willCollide(!right)");
+
     while(~obs:!query) {
-        op: log(info, "in loop");
-        if(obs:!westQuery) {
+        if(obs:!westQuery && ~obs:!collideRight) {
             act:moveRight();
         }
-        elseif(obs:!northQuery) {
+        elseif(obs:!northQuery && ~obs:!collideDown) {
             act:moveDown();
         }
-        elseif(obs:!eastQuery) {
+        elseif(obs:!eastQuery && ~obs:!collideLeft) {
             act:moveLeft();
         }
-        elseif(obs:!southQuery) {
+        elseif(obs:!southQuery && ~obs:!collideUp) {
             act:moveUp();
         }
     }
 }
 
 () = moveToDoor["?actor moves to the door"]() {
-    edu.tufts.hrilab.fol.Predicate !query;
-    edu.tufts.hrilab.fol.Predicate !northQuery;
-    edu.tufts.hrilab.fol.Predicate !southQuery;
-    edu.tufts.hrilab.fol.Predicate !eastQuery;
-    edu.tufts.hrilab.fol.Predicate !canMoveWestQuery;
+    Predicate !query;
+    Predicate !northQuery;
+    Predicate !southQuery;
+    Predicate !eastQuery;
+    Predicate !canMoveWestQuery;
 
     conditions : {
         pre : ~atDoor();

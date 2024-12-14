@@ -165,10 +165,10 @@ class Game:
         )
         return overlap_pickup > 0
     
-    def player_move(self, action: Direction) -> None:
+    def player_move(self, action: Direction) -> bool:
         (x1, y1) = DIRECTION_VECTOR[action]
 
-        self.move_robot([self.robot_speed * x1, self.robot_speed * y1])
+        return self.move_robot([self.robot_speed * x1, self.robot_speed * y1])
         
     """
     Makes the robot pick up the box if it can.
@@ -240,13 +240,14 @@ class Game:
         return False
     
     # moves player
-    def move_robot(self, position_change) -> None:
+    def move_robot(self, position_change) -> bool:
         new_position = (self.robot_pos[0] + position_change[0], self.robot_pos[1] + position_change[1])
 
         if self.collide(new_position) or self.hits_wall(new_position):
-            return
+            return False
 
         self.robot_pos = new_position
+        return True
     
     """
     Getter for the box sprite. This is used in place of directly accessing the field

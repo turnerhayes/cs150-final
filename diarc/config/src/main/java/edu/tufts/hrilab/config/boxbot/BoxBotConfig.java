@@ -31,7 +31,8 @@ public class BoxBotConfig extends DiarcConfiguration {
     String gmArgs = "-beliefinitfile agents/boxbot.pl " +
             "-selector edu.tufts.hrilab.action.selector.GoalPlanningActionSelector " +
             "-asl domains/boxbot.asl " +
-            "-goal listen(self) goal(self,and(atDoor(),isSwitchPressed()))";
+            "-goal listen(self)";
+            // "-goal listen(self) goal(self,and(atDoor(),isSwitchPressed()))";
 
     createInstance(BoxBotComponent.class);
     createInstance(GoalManagerComponent.class, gmArgs);

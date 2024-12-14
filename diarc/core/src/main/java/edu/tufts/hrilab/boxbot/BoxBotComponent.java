@@ -59,45 +59,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         this.game.perform(new GetObservation());
     }
 
-    protected void updateBeliefs() {
-        // BoxBotObservation obs = this.game.observation;
-
-        // if (obs == null) {
-        //     return;
-        // }
-
-        // Set<Term> toSubmit = new HashSet<>();
-
-        // if (obs.isHoldingBox) {
-        //     toSubmit.add(Factory.createPredicate("isHoldingBox(self)"));
-        // } else {
-        //     toSubmit.add(Factory.createNegatedPredicate("isHoldingBox(self)"));
-        // }
-
-        // if (obs.isInPickupRange) {
-        //     toSubmit.add(Factory.createPredicate("isInPickupRange(self)"));
-        // } else {
-        //     toSubmit.add(Factory.createNegatedPredicate("isInPickupRange(self)"));
-        // }
-
-        // if (obs.isSwitchPressed) {
-        //     toSubmit.add(Factory.createPredicate("isSwitchPressed(self)"));
-        // } else {
-        //     toSubmit.add(Factory.createNegatedPredicate("isSwitchPressed(self)"));
-        // }
-
-        // // toSubmit.add(Factory.createVariable("ROBOTPOS", "location"));
-
-        // if (!toSubmit.isEmpty()) {
-        //     try {
-        //         TRADE.getAvailableService(new TRADEServiceConstraints().name("assertBeliefs").argTypes(Set.class))
-        //                 .call(void.class, toSubmit);
-        //     } catch (TRADEException e) {
-        //         log.error("assertBeliefs not found", e);
-        //     }
-        // }
-    }
-
     private boolean isNorthOfSwitchCenter() {
         return this.game.observation.robotPos[1] <= this.game.observation.switchPos[1] +
             Math.floor(this.game.observation.switchHeight/2);
@@ -218,6 +179,106 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
+    private boolean pointIsInArea(int x, int y, int left, int top, int right, int bottom) {
+        if (x >= left && x <= right && y >= top && y <= bottom) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean checkCollision(int xOffset, int yOffset) {
+        BoxBotObservation observation = this.game.observation;
+        int robotX = observation.robotPos[0];
+        int robotY = observation.robotPos[1];
+        int newLeftX = robotX + xOffset;
+        int newTopY = robotY + yOffset;
+        int newRightX = newLeftX + observation.robotWidth;
+        int newBottomY = newTopY + observation.robotHeight;
+
+        int boxLeftX = observation.boxPos[0];
+        int boxTopY = observation.boxPos[1];
+        int boxRightX = boxLeftX + observation.boxWidth;
+        int boxBottomY = boxTopY + observation.boxHeight;
+
+        int switchLeftX = observation.switchPos[0];
+        int switchTopY = observation.switchPos[1];
+        int switchRightX = switchLeftX + observation.switchWidth;
+        int switchBottomY = switchTopY + observation.switchHeight;
+
+        // check box collision
+        if (!observation.isHoldingBox) { // can't collide with box if we're holding it
+            if (
+                pointIsInArea(newLeftX, newTopY, boxLeftX, boxTopY, boxRightX, boxBottomY) ||
+                pointIsInArea(newLeftX, newBottomY, boxLeftX, boxTopY, boxRightX, boxBottomY) ||
+                pointIsInArea(newRightX, newTopY, boxLeftX, boxTopY, boxRightX, boxBottomY) ||
+                pointIsInArea(newRightX, newBottomY, boxLeftX, boxTopY, boxRightX, boxBottomY)
+            ) {
+                return true;
+            }
+        }
+
+        // check switch collision
+        if (
+            pointIsInArea(newLeftX, newTopY, switchLeftX, switchTopY, switchRightX, switchBottomY) ||
+            pointIsInArea(newLeftX, newBottomY, switchLeftX, switchTopY, switchRightX, switchBottomY) ||
+            pointIsInArea(newRightX, newTopY, switchLeftX, switchTopY, switchRightX, switchBottomY) ||
+            pointIsInArea(newRightX, newBottomY, switchLeftX, switchTopY, switchRightX, switchBottomY)
+        ) {
+            return true;
+        }
+
+        // check wall collision
+        if (
+            newTopY <= observation.wallWidth ||
+            newBottomY >= observation.wallWidth ||
+            newRightX >= observation.wallWidth ||
+            newRightX >= observation.wallWidth || (
+                newLeftX <= observation.wallWidth &&
+                (
+                    newBottomY > observation.doorBottom ||
+                    newTopY <= observation.doorTop
+                )
+            )
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @TRADEService
+    @Observes({ "willCollide(?direction)" })
+    public List<HashMap<Variable, Symbol>> willCollide(Term term) {
+        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
+
+        Symbol directionSymbol = term.getArgs().get(0);
+        String direction = directionSymbol.getName();
+
+        if (direction == "UP") {
+            if (checkCollision(0, -1)) {
+                list.add(new HashMap<>());
+            }
+        }
+        else if (direction == "DOWN") {
+            if (checkCollision(0, 1)) {
+                list.add(new HashMap<>());
+            }
+        }
+        else if (direction == "LEFT") {
+            if (checkCollision(-1, 0)) {
+                list.add(new HashMap<>());
+            }
+        }
+        else if (direction == "RIGHT") {
+            if (checkCollision(1, 0)) {
+                list.add(new HashMap<>());
+            }
+        }
+
+        return list;
+    }
+
     private boolean isApproximatelyAt(int robotPos, int targetPos) {
         if (robotPos < targetPos - POSITION_TOLERANCE) {
             return false;
@@ -324,7 +385,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification getObservation() {
         GameAction action = new GetObservation();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
 
@@ -332,7 +392,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification moveLeft() {
         GameAction action = new Left();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
     
@@ -340,7 +399,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification moveRight() {
         GameAction action = new Right();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
     
@@ -348,7 +406,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification moveUp() {
         GameAction action = new Up();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
     
@@ -356,7 +413,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification moveDown() {
         GameAction action = new Down();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
     
@@ -364,7 +420,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification toggleHold() {
         GameAction action = new ToggleHold();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
 }

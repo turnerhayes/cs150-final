@@ -88,43 +88,63 @@ public abstract class Planner {
     }
 
     String plan = plan(domain, problem);
+    log.info("Goal: {}", goal);
+//     if (plan == null) {
+//       // DEBUG: skip LLM and use dummy plan
+//       plan = """
+// (moveToBox boxbot)
+// (pickUpBox boxbot)
+// (moveToSwitch boxbot)
+// (putDownBox boxbot)
+// (moveToDoor boxbot)
+// """;
+//     }
     if (plan == null) {
       log.error("Planner could not generate a plan. Falling back to LLM.");
 
       String domainStr = pddl.getDomain().generate("llm");
       String problemStr = pddl.getProblem().generate("llm");
 
-      log.info("PDDL domain:\n" + domainStr);
-      log.info("PDDL problem:\n" + problemStr);
+      // log.info("PDDL domain:\n" + domainStr);
+      // log.info("PDDL problem:\n" + problemStr);
 
-      // Construct a natural language prompt for the LLM
-      // String prompt = "I am a robot that needs to get a plan to accomplish " +
-      //   "an action. Using a PDDL domain and problem definition, generate a " +
-      //   "plan to accomplish the goal. Please only respond with a valid PDDL " +
-      //   "plan. Do not include explanations or any text that would make it an " +
-      //   "invalid plan. Each instruction should be on a single line and look " +
-      //   "similar to the following example\n\n:" +
-      //   "(gotospot spot spotlocation_0 spotlocation_5 room1 room3)\n\n" +
-      //   "The domain is defined as follows:\n\n" + domainStr +
-      //   "The problem is defined as follows:\n\n" + problemStr;
-      String prompt = "I am a robot that needs to get a plan to accomplish an action. Given a description of the environment and available actions, generate a plan to accomplish the goal. Please only respond with a valid PDDL plan. Do not include explanations or any text that would make it an invalid plan. Do not wrap it in backticks or otherwise try to format it. Each instruction should be on a single line and look similar to the following example:\r\n" + //
-                "\r\n" + //
-                "(moveToBox boxbot)\r\n" + //
-                "\r\n" + //
-                "The environment contains:\r\n" + //
-                "- A robot called \"boxbot\" (the agent that moves around). It is initially holding nothing and is some distance from the box.\r\n" + //
-                "- A box (heavy, but not too heavy for the robot to lift it)\r\n" + //
-                "- A switch on the floor. When the switch is pressed, the lights in the room are turned off.\r\n" + //
-                "\r\n" + //
-                "The available actions are:\r\n" + //
-                "- (moveToBox boxbot): moves the robot to the box\r\n" + //
-                "- (pickUpBox boxbot): If the robot is not holding anything, picks up what's in front of it\r\n" + //
-                "- (putDownBox boxbot): If the robot is holding something, places down what it's holding and releases it\r\n" + //
-                "- (moveToSwitch boxbot): moves the robot to the switch\r\n" + //
-                "- (moveToDoor boxbot): moves the robot to the exit of the room\r\n" + //
-                "\r\n" + //
-                "The goal is:\r\n" + //
-                "- Turn off the lights and go to the exit of the room. The lights must remain off.";
+//       String prompt = String.format("""
+// I am a robot that needs to get a plan to accomplish an action. Given a PDDL domain file and problem file, generate a plan to accomplish the goal. Please only respond with a valid PDDL plan. The plan should give the most efficient set of steps. Do not include explanations or any text that would make it an invalid plan. Do not wrap it in backticks or otherwise try to format it. Each instruction should be on a single line and look similar to the following example:"
+
+// (moveToBox boxbot)
+
+// The domain is defined as follows:
+
+// %s
+
+// The problem is defined as follows:
+
+// %s
+//           """, domainStr, problemStr);
+
+//       log.info("Prompt:\n\n{}", prompt);
+
+      String prompt = """
+I am a robot that needs to get a plan to accomplish an action. Given a description of the environment and available actions, generate a plan to accomplish the goal. Please only respond with a valid PDDL plan. The plan should give the most efficient set of steps. Do not include explanations or any text that would make it an invalid plan. Do not wrap it in backticks or otherwise try to format it. Each instruction should be on a single line and look similar to the following example:
+
+(moveToBox boxbot)
+
+The environment contains:
+- A robot (the agent that moves around). It is initially holding nothing and is some distance from the box.
+- A box (heavy, but not too heavy for the robot to lift it)
+- A switch on the floor. When the switch is pressed, the lights in the room are turned off.  The switch does not take much weight to press it down.
+
+The available actions are:
+- (moveToBox boxbot): moves the robot to the box
+- (pickUpBox boxbot): If the robot is at the box and is not holding it, picks up the box
+- (putDownBox boxbot): If the robot is holding the box, puts down the box and releases it
+- (moveToSwitch boxbot): moves the robot to the switch
+- (moveToDoor boxbot): moves the robot to the exit of the room
+No other actions may be used.
+
+The goal is:
+- Turn off the lights and go to the exit of the room. The lights must remain off.
+""";
       try {
           Completion answer = TRADE.getAvailableService(
               new TRADEServiceConstraints().name("chatCompletion").argTypes(String.class)
