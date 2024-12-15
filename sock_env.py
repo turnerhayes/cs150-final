@@ -10,7 +10,7 @@ from env import SimulatorEnv
 
 import pygame
 
-ACTION_COMMANDS = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOGGLE_HOLD', 'GET_OBSERVATION']
+ACTION_COMMANDS = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOGGLE_HOLD', 'GET_OBSERVATION', 'RESET']
 
 def serialize_data(data):
     if isinstance(data, set):
@@ -41,6 +41,8 @@ class BoxBotEventHandler:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.env.step(PlayerAction.TOGGLE_HOLD)
+                    elif event.key == pygame.K_r:
+                        self.env.step(PlayerAction.RESET)
 
         if self.keyboard_input:
             keys = pygame.key.get_pressed()

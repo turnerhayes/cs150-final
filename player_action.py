@@ -8,6 +8,7 @@ class PlayerAction(IntEnum):
     LEFT = 4,
     TOGGLE_HOLD = 5,
     GET_OBSERVATION = 6,
+    RESET = 7,
 
 PlayerActionTable = {
     "UP" : PlayerAction.UP,
@@ -16,4 +17,5 @@ PlayerActionTable = {
     "LEFT" : PlayerAction.LEFT,
     "TOGGLE_HOLD": PlayerAction.TOGGLE_HOLD,
     "GET_OBSERVATION": PlayerAction.GET_OBSERVATION,
+    "RESET": PlayerAction.RESET,
 }

@@ -33,6 +33,8 @@ class SimulatorEnv(gym.Env):
             game.player_move(direction)
         elif action == PlayerAction.TOGGLE_HOLD:
             game.toggle_holding_item()
+        elif action == PlayerAction.RESET:
+            game.reset()
         elif action == PlayerAction.GET_OBSERVATION:
             # This is a no-op; we just want to get the observation
             pass
