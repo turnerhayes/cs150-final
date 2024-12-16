@@ -1,8 +1,18 @@
 # CS-150 Final Project
 
-To run the simulator alone, run `python run.py`.
+## Installing Python prerequisites
 
-## Simulator integration
+The requirements for the simulator are listed in requirements.txt. Install them using `pip install -r requirements.txt` or your favorite package manager. If you're using anaconda, you may need to add the conda-forge channel with `conda config --append channels conda-forge`.
+
+## Simulator
+
+To run the simulator, run `python sock_env.py`. To enable support for keyboard interaction, pass the `--keyboard_input` flag.
+
+## DIARC
+
+To run the DIARC config, run `./gradlew launch -Pmain=edu.tufts.hrilab.config.boxbot.BoxBotConfig`. You must make sure the simulator is running before you launch the config, or the config launch will fail.
+
+## Web GUI
 
 To run the DIARC component with simulator integration and the web UI to trigger actions:
 1. Run the simulator socket environment from the root directory, `python sock_env.py`
