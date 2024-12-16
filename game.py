@@ -243,7 +243,7 @@ class Game:
         
         return False
     
-    # moves player
+    # moves robot
     def move_robot(self, position_change) -> bool:
         new_position = (self.robot_pos[0] + position_change[0], self.robot_pos[1] + position_change[1])
 

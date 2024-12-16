@@ -20,6 +20,8 @@ class SimulatorEnv(gym.Env):
         done = False
         
         game: Game = self.unwrapped.game
+        
+        success = True
 
         if action in MOVEMENT_ACTIONS:
             if action == PlayerAction.UP:
@@ -30,9 +32,9 @@ class SimulatorEnv(gym.Env):
                 direction = Direction.RIGHT
             else:
                 direction = Direction.LEFT
-            game.player_move(direction)
+            success = game.player_move(direction)
         elif action == PlayerAction.TOGGLE_HOLD:
-            game.toggle_holding_item()
+            success = game.toggle_holding_item()
         elif action == PlayerAction.RESET:
             game.reset()
         elif action == PlayerAction.GET_OBSERVATION:
@@ -43,7 +45,9 @@ class SimulatorEnv(gym.Env):
             self.unwrapped.step_count += 1
         if not game.running:
             done = True
-        return observation, 0., done, None, None
+        return observation, 0., done, {
+            'result': success,
+        }, None
 
     def reset(self) -> Observation:
         game = Game()

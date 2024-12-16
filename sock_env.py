@@ -61,25 +61,19 @@ class BoxBotEventHandler:
 
 
 def get_action_json(action, env_, obs, reward, done, info_=None):
-    # cmd, arg = get_command_argument(action)
-
     if not isinstance(info_, dict):
         result = True
         message = ''
-        step_cost = 0
     else:
-        result, step_cost, message = info_['result'], info_['step_cost'], info_['message']
+        result, message = info_['result'], info_.get('message')
 
     result = 'SUCCESS' if result else 'FAIL'
 
-    action_json = {'command_result': {'command': action, 'result': result, 'message': message,
-                                      'stepCost': step_cost},
+    action_json = {'command_result': {'command': action, 'result': result, 'message': message,},
                    'observation': obs,
                    'step': env_.unwrapped.step_count,
                    'gameOver': done,
                    'violations': ''}
-    # print(action_json)
-    # action_json = {"hello": "world"}
     return action_json
 
 
@@ -173,6 +167,7 @@ if __name__ == "__main__":
         if should_perform_action and curr_action is not None:
             print("Taking action: ", PlayerAction(curr_action).name)
             obs, reward, done, info, violations = env.step(curr_action)
+            print("info: %s" % info)
             for key, mask, command in e:
                 json_to_send = get_action_json(command, env, obs, reward, done, info)
                 
