@@ -1,9 +1,12 @@
+import edu.tufts.hrilab.fol.Predicate;
+import java.lang.Boolean;
+
 () = moveToBox["?actor moves to the box"]() {
-    edu.tufts.hrilab.fol.Predicate !query;
-    edu.tufts.hrilab.fol.Predicate !northQuery;
-    edu.tufts.hrilab.fol.Predicate !southQuery;
-    edu.tufts.hrilab.fol.Predicate !westQuery;
-    edu.tufts.hrilab.fol.Predicate !eastQuery;
+    Predicate !query;
+    Predicate !northQuery;
+    Predicate !southQuery;
+    Predicate !westQuery;
+    Predicate !eastQuery;
 
     conditions : {
         pre infer: ~atBox();
@@ -63,11 +66,11 @@
 }
 
 () = moveToSwitch["?actor moves to the light switch"]() {
-    edu.tufts.hrilab.fol.Predicate !query;
-    edu.tufts.hrilab.fol.Predicate !northQuery;
-    edu.tufts.hrilab.fol.Predicate !southQuery;
-    edu.tufts.hrilab.fol.Predicate !westQuery;
-    edu.tufts.hrilab.fol.Predicate !eastQuery;
+    Predicate !query;
+    Predicate !northQuery;
+    Predicate !southQuery;
+    Predicate !westQuery;
+    Predicate !eastQuery;
 
     conditions : {
         pre : ~atSwitch();
@@ -86,17 +89,61 @@
     !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "westOfSwitch()");
     !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfSwitch()");
 
-    op: log(info, "about to loop");
     while(~obs:!query) {
-        op: log(info, "in loop");
         if(obs:!westQuery) {
-            act:moveRight();
+            try {
+                op:log(info, "MOVED RIGHT");
+                act:moveRight();
+            }
+            catch(FAIL) {
+                op:log(info, "FAILED TO MOVE RIGHT");
+                if(obs:!northQuery) {
+                    try {
+                        act:moveDown();
+                    }
+                    catch(FAIL) {
+                        op:log(info, "    FAILED TO MOVE DOWN");
+                        if(obs:!eastQuery) {
+                            try {
+                                act:moveLeft();
+                            }
+                            catch(FAIL) {
+                                op:log(info, "        FAILED TO MOVE LEFT");
+                                if(obs:!southQuery) {
+                                    act:moveUp();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         elseif(obs:!northQuery) {
-            act:moveDown();
+            try {
+                act:moveDown();
+            }
+            catch(FAIL) {
+                if(obs:!eastQuery) {
+                    try {
+                        act:moveLeft();
+                    }
+                    catch(FAIL) {
+                        if(obs:!southQuery) {
+                            act:moveUp();
+                        }
+                    }
+                }
+            }
         }
         elseif(obs:!eastQuery) {
-            act:moveLeft();
+            try {
+                act:moveLeft();
+            }
+            catch(FAIL) {
+                if(obs:!southQuery) {
+                    act:moveUp();
+                }
+            }
         }
         elseif(obs:!southQuery) {
             act:moveUp();
@@ -105,11 +152,11 @@
 }
 
 () = moveToDoor["?actor moves to the door"]() {
-    edu.tufts.hrilab.fol.Predicate !query;
-    edu.tufts.hrilab.fol.Predicate !northQuery;
-    edu.tufts.hrilab.fol.Predicate !southQuery;
-    edu.tufts.hrilab.fol.Predicate !eastQuery;
-    edu.tufts.hrilab.fol.Predicate !canMoveWestQuery;
+    Predicate !query;
+    Predicate !northQuery;
+    Predicate !southQuery;
+    Predicate !eastQuery;
+    Predicate !canMoveWestQuery;
 
     conditions : {
         pre : ~atDoor();
