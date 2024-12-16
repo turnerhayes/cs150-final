@@ -17,11 +17,9 @@ import edu.tufts.hrilab.action.annotations.Observes;
 import edu.tufts.hrilab.diarc.DiarcComponent;
 import edu.tufts.hrilab.fol.Predicate;
 import edu.tufts.hrilab.fol.Variable;
-import edu.tufts.hrilab.fol.Symbol;
 import edu.tufts.hrilab.fol.Term;
 import edu.tufts.hrilab.fol.Factory;
 import edu.tufts.hrilab.fol.Symbol;
-import edu.tufts.hrilab.fol.Variable;
 import edu.tufts.hrilab.interfaces.BoxBotSimulatorInterface;
 import edu.tufts.hrilab.util.Util;
 import edu.tufts.hrilab.boxbot.actions.Left;
@@ -37,6 +35,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Component facilitating interaction with a BoxBot simulation.
+ */
 public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorInterface {
     protected int socketPort = 9000;
     protected GamePlay game;
@@ -59,57 +60,12 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         this.game.perform(new GetObservation());
     }
 
-    protected void updateBeliefs() {
-        // BoxBotObservation obs = this.game.observation;
+    /*************************************
+     * OBSERVERS
+     *************************************/
 
-        // if (obs == null) {
-        //     return;
-        // }
 
-        // Set<Term> toSubmit = new HashSet<>();
-
-        // if (obs.isHoldingBox) {
-        //     toSubmit.add(Factory.createPredicate("isHoldingBox(self)"));
-        // } else {
-        //     toSubmit.add(Factory.createNegatedPredicate("isHoldingBox(self)"));
-        // }
-
-        // if (obs.isInPickupRange) {
-        //     toSubmit.add(Factory.createPredicate("isInPickupRange(self)"));
-        // } else {
-        //     toSubmit.add(Factory.createNegatedPredicate("isInPickupRange(self)"));
-        // }
-
-        // if (obs.isSwitchPressed) {
-        //     toSubmit.add(Factory.createPredicate("isSwitchPressed(self)"));
-        // } else {
-        //     toSubmit.add(Factory.createNegatedPredicate("isSwitchPressed(self)"));
-        // }
-
-        // // toSubmit.add(Factory.createVariable("ROBOTPOS", "location"));
-
-        // if (!toSubmit.isEmpty()) {
-        //     try {
-        //         TRADE.getAvailableService(new TRADEServiceConstraints().name("assertBeliefs").argTypes(Set.class))
-        //                 .call(void.class, toSubmit);
-        //     } catch (TRADEException e) {
-        //         log.error("assertBeliefs not found", e);
-        //     }
-        // }
-    }
-
-    private boolean isNorthOfSwitchCenter() {
-        return this.game.observation.robotPos[1] <= this.game.observation.switchPos[1] +
-            Math.floor(this.game.observation.switchHeight/2);
-    }
-
-    private boolean isSouthOfSwitchCenter() {
-        return this.game.observation.robotPos[1] >= this.game.observation.switchPos[1] +
-            Math.floor(this.game.observation.switchHeight/2);
-    }
-
-    @TRADEService
-    @Observes({ "northOfBox()" })
+    @Override
     public List<HashMap<Variable, Symbol>> northOfBox(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -119,8 +75,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "southOfBox()" })
+    @Override
     public List<HashMap<Variable, Symbol>> southOfBox(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -130,8 +85,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "eastOfBox()" })
+    @Override
     public List<HashMap<Variable, Symbol>> eastOfBox(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -141,8 +95,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "westOfBox()" })
+    @Override
     public List<HashMap<Variable, Symbol>> westOfBox(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -152,8 +105,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "northOfSwitch()" })
+    @Override
     public List<HashMap<Variable, Symbol>> northOfSwitch(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -162,20 +114,8 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         }
         return list;
     }
-    
-    @TRADEService
-    @Observes({ "northOfSwitchCenter()" })
-    public List<HashMap<Variable, Symbol>> northOfSwitchCenter(Term term) {
-        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
-        if (isNorthOfSwitchCenter()) {
-            list.add(new HashMap<>());
-        }
-        return list;
-    }
-
-    @TRADEService
-    @Observes({ "southOfSwitch()" })
+    @Override
     public List<HashMap<Variable, Symbol>> southOfSwitch(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -185,19 +125,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "southOfSwitchCenter()" })
-    public List<HashMap<Variable, Symbol>> southOfSwitchCenter(Term term) {
-        List<HashMap<Variable, Symbol>> list = new ArrayList<>();
-
-        if (isSouthOfSwitchCenter()) {
-            list.add(new HashMap<>());
-        }
-        return list;
-    }
-
-    @TRADEService
-    @Observes({ "eastOfSwitch()" })
+    @Override
     public List<HashMap<Variable, Symbol>> eastOfSwitch(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -207,8 +135,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "westOfSwitch()" })
+    @Override
     public List<HashMap<Variable, Symbol>> westOfSwitch(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -218,20 +145,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    private boolean isApproximatelyAt(int robotPos, int targetPos) {
-        if (robotPos < targetPos - POSITION_TOLERANCE) {
-            return false;
-        }
-
-        if (robotPos > targetPos + POSITION_TOLERANCE) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @TRADEService
-    @Observes({ "isAtSwitch()" })
+    @Override
     public List<HashMap<Variable, Symbol>> isAtSwitch(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -244,8 +158,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "isInPickupRange()" })
+    @Override
     public List<HashMap<Variable, Symbol>> isInPickupRange(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
         if (this.game.observation.isInPickupRange) {
@@ -254,8 +167,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
     
-    @TRADEService
-    @Observes({ "northOfDoorCenter()" })
+    @Override
     public List<HashMap<Variable, Symbol>> northOfDoorCenter(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
         
@@ -268,8 +180,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
     
-    @TRADEService
-    @Observes({ "southOfDoorCenter()" })
+    @Override
     public List<HashMap<Variable, Symbol>> southOfDoorCenter(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
         
@@ -282,8 +193,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "eastOfDoor()" })
+    @Override
     public List<HashMap<Variable, Symbol>> eastOfDoor(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -293,8 +203,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "isAtDoor()" })
+    @Override
     public List<HashMap<Variable, Symbol>> isAtDoor(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
 
@@ -308,8 +217,7 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
-    @TRADEService
-    @Observes({ "canMoveWest()" })
+    @Override
     public List<HashMap<Variable, Symbol>> canMoveWest(Term term) {
         List<HashMap<Variable, Symbol>> list = new ArrayList<>();
         if (
@@ -320,11 +228,30 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
         return list;
     }
 
+    /*************************************
+     * UTILITY FUNCTIONS
+     *************************************/
+
+    private boolean isApproximatelyAt(int robotPos, int targetPos) {
+        if (robotPos < targetPos - POSITION_TOLERANCE) {
+            return false;
+        }
+
+        if (robotPos > targetPos + POSITION_TOLERANCE) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /*************************************
+     * ACTION IMPLEMENTATIONS
+     *************************************/
+
     @Override
     public Justification getObservation() {
         GameAction action = new GetObservation();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
 
@@ -332,7 +259,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification moveLeft() {
         GameAction action = new Left();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
     
@@ -340,7 +266,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification moveRight() {
         GameAction action = new Right();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
     
@@ -348,7 +273,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification moveUp() {
         GameAction action = new Up();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
     
@@ -356,7 +280,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification moveDown() {
         GameAction action = new Down();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
     
@@ -364,7 +287,6 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     public Justification toggleHold() {
         GameAction action = new ToggleHold();
         game.perform(action);
-        this.updateBeliefs();
         return new ConditionJustification(action.getSuccess());
     }
 }
