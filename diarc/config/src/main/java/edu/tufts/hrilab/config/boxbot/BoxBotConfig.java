@@ -18,6 +18,9 @@ import edu.tufts.hrilab.slug.refResolution.ReferenceResolutionComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Configuration for running the DIARC part of the BoxBot simulation.
+ */
 public class BoxBotConfig extends DiarcConfiguration {
 
   protected static Logger log = LoggerFactory.getLogger(BoxBotConfig.class);
@@ -31,7 +34,7 @@ public class BoxBotConfig extends DiarcConfiguration {
     String gmArgs = "-beliefinitfile agents/boxbot.pl " +
             "-selector edu.tufts.hrilab.action.selector.GoalPlanningActionSelector " +
             "-asl domains/boxbot.asl " +
-            "-goal listen(self) goal(self,and(atDoor(),isSwitchPressed()))";
+            "-goal goal(self,and(atDoor(),isSwitchPressed()))";
 
     createInstance(BoxBotComponent.class);
     createInstance(GoalManagerComponent.class, gmArgs);

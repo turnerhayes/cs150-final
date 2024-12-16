@@ -21,35 +21,81 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+/**
+ * Contains information about the state of the simulation at a point in time.
+ */
 public class BoxBotObservation {
   private static final Logger log = LoggerFactory.getLogger(BoxBotObservation.class);
 
+  
+  /*************************************
+   * FIELDS
+   *************************************/
+
+  /**
+   * If true, the robot is holding the box.
+   */
   public boolean isHoldingBox;
+  /**
+   * If true, the switch is pressed down.
+   */
   public boolean isSwitchPressed;
+  /**
+   * If true, the box is close enough to the robot to be picked up.
+   */
   public boolean isInPickupRange;
+  /**
+   * The position of the robot, as an (x, y) tuple.
+   */
   public int[] robotPos;
+  /**
+   * The position of the switch, as an (x, y) tuple.
+   */
   public int[] switchPos;
+  /**
+   * The position of the box, as an (x, y) tuple.
+   */
   public int[] boxPos;
+  /**
+   * The width of the robot, in pixels.
+   */
   public int robotWidth;
+  /**
+   * The height of the robot, in pixels.
+   */
   public int robotHeight;
+  /**
+   * The width of the box, in pixels.
+   */
   public int boxWidth;
+  /**
+   * The height of the box, in pixels.
+   */
   public int boxHeight;
+  /**
+   * The width of the switch, in pixels.
+   */
   public int switchWidth;
+  /**
+   * The height of the switch, in pixels.
+   */
   public int switchHeight;
+  /**
+   * The y coordinate of the top of the door.
+   */
   public int doorTop;
+  /**
+   * The y coordinate of the bottom of the door.
+   */
   public int doorBottom;
+  /**
+   * The width of each wall.
+   */
   public int wallWidth;
 
-  
-  public InteractiveObject lightSwitch;
-  public InteractiveObject box;
-  public InteractiveObject door;
-  public Robot boxbot;
-
-  public static boolean overlap(double x1, double y1, double width1, double height1,
-                                double x2, double y2, double width2, double height2) {
-    return !(x1 > x2 + width2 || x2 > x1 + width1 || y1 > y2 + height2 || y2 > y1 + height1);
-  }
+  /*************************************
+   * UTILITY FUNCTIONS
+   *************************************/
 
   @Override
   public String toString() {
@@ -163,79 +209,5 @@ public class BoxBotObservation {
             .append(this.doorBottom)
             .append(this.wallWidth)
             .hashCode();
-  }
-  
-  public class InteractiveObject {
-    public double width;
-    public double height;
-
-    public double[] position;
-
-    public boolean collision(InteractiveObject other, double x, double y) {
-      return overlap(this.position[0], this.position[1], this.width, this.height,
-          x, y, other.width, other.height);
-    }
-    
-
-    @Override
-    public int hashCode() {
-      return HashCodeBuilder.reflectionHashCode(this);
-    }
-  }
-
-  public enum Direction {
-    NORTH(0),
-    EAST(2),
-    SOUTH(1),
-    WEST(3);
-
-    public final int index;
-
-    Direction(int index) {
-      this.index = index;
-    }
-
-    public static Direction fromIndex(int index) {
-      for (Direction dir : Direction.values()) {
-        if (dir.index == index) {
-          return dir;
-        }
-      }
-      return null;
-    }
-
-    public static Direction cw(Direction init) {
-      return Direction.values()[(init.ordinal() + 1) % 4];
-    }
-
-    public static Direction ccw(Direction init) {
-      return Direction.values()[(init.ordinal() + 3) % 4];
-    }
-  }
-
-  public boolean canInteract(InteractiveObject obj) {
-    double range = 0.5;
-    double x = this.boxbot.position[0];
-    double y = this.boxbot.position[1];
-    switch (this.boxbot.direction) {
-      case 0: // North
-        return obj.collision(this.boxbot, x, y - range);
-      case 1: // South
-        return obj.collision(this.boxbot, x, y + range);
-      case 2: // East
-        return obj.collision(this.boxbot, x + range, y);
-      case 3: // West
-        return obj.collision(this.boxbot, x - range, y);
-    }
-    return false;
-  }
-
-  public class Robot extends InteractiveObject {
-    public boolean is_holding_box;
-    public int direction;
-  }
-  
-  public boolean is_holding_box() {
-    return this.boxbot.is_holding_box;
   }
 }

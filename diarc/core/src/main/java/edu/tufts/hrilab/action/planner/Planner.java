@@ -89,24 +89,19 @@ public abstract class Planner {
 
     String plan = plan(domain, problem);
     if (plan == null) {
+      if (true) {
+        // DEBUG dummy response
+        plan = """
+(moveToBox boxbot)
+(pickUpBox boxbot)
+(moveToSwitch boxbot)
+(putDownBox boxbot)
+(moveToDoor boxbot)
+""";
+      }
+      else {
       log.error("Planner could not generate a plan. Falling back to LLM.");
 
-      String domainStr = pddl.getDomain().generate("llm");
-      String problemStr = pddl.getProblem().generate("llm");
-
-      log.info("PDDL domain:\n" + domainStr);
-      log.info("PDDL problem:\n" + problemStr);
-
-      // Construct a natural language prompt for the LLM
-      // String prompt = "I am a robot that needs to get a plan to accomplish " +
-      //   "an action. Using a PDDL domain and problem definition, generate a " +
-      //   "plan to accomplish the goal. Please only respond with a valid PDDL " +
-      //   "plan. Do not include explanations or any text that would make it an " +
-      //   "invalid plan. Each instruction should be on a single line and look " +
-      //   "similar to the following example\n\n:" +
-      //   "(gotospot spot spotlocation_0 spotlocation_5 room1 room3)\n\n" +
-      //   "The domain is defined as follows:\n\n" + domainStr +
-      //   "The problem is defined as follows:\n\n" + problemStr;
       String prompt = """
 I am a robot that needs to get a plan to accomplish an action. Given a description of the environment and available actions, generate a plan to accomplish the goal. Please only respond with a valid PDDL plan. The plan should give the most efficient set of steps. Do not include explanations or any text that would make it an invalid plan. Do not wrap it in backticks or otherwise try to format it. Each instruction should be on a single line and look similar to the following example: 
 
@@ -148,6 +143,7 @@ The goal is:
       } catch (TRADEException e) {
           log.error("TRADE service call to LLM failed.", e);
           return null; // No fallback plan available
+      }
       }
     } else {
       log.info("PLAN = " + plan);
