@@ -25,16 +25,16 @@
 
     while(~obs:!query) {
         if(obs:!westQuery) {
-            act:moveRight();
+            act:moveEast();
         }
         elseif(obs:!northQuery) {
-            act:moveDown();
+            act:moveSouth();
         }
         elseif(obs:!eastQuery) {
-            act:moveLeft();
+            act:moveWest();
         }
         elseif(obs:!southQuery) {
-            act:moveUp();
+            act:moveNorth();
         }
     }
 }
@@ -86,20 +86,18 @@
     !westQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "westOfSwitch()");
     !eastQuery = op:invokeStaticMethod("edu.tufts.hrilab.fol.Factory", "createPredicate", "eastOfSwitch()");
 
-    op: log(info, "about to loop");
     while(~obs:!query) {
-        op: log(info, "in loop");
         if(obs:!westQuery) {
-            act:moveRight();
+            act:moveEast();
         }
         elseif(obs:!northQuery) {
-            act:moveDown();
+            act:moveSouth();
         }
         elseif(obs:!eastQuery) {
-            act:moveLeft();
+            act:moveWest();
         }
         elseif(obs:!southQuery) {
-            act:moveUp();
+            act:moveNorth();
         }
     }
 }
@@ -130,15 +128,15 @@
 
     while(~obs:!query) {
         if(obs:!southQuery) {
-            act:moveUp();
+            act:moveNorth();
         }
         elseif(obs:!eastQuery) {
             if(obs:!canMoveWestQuery) {
-                act:moveLeft();
+                act:moveWest();
             }
         }
         elseif(obs:!northQuery) {
-            act:moveDown();
+            act:moveSouth();
         }
     }
 }

@@ -10,7 +10,7 @@ from env import SimulatorEnv
 
 import pygame
 
-ACTION_COMMANDS = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOGGLE_HOLD', 'GET_OBSERVATION', 'RESET']
+ACTION_COMMANDS = ['NORTH', 'SOUTH', 'WEST', 'EAST', 'TOGGLE_HOLD', 'GET_OBSERVATION', 'RESET']
 
 def serialize_data(data):
     if isinstance(data, set):
@@ -46,16 +46,16 @@ class BoxBotEventHandler:
 
         if self.keyboard_input:
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_UP]:  # up
-                self.env.step(PlayerAction.UP)
-            elif keys[pygame.K_DOWN]:  # down
-                self.env.step(PlayerAction.DOWN)
+            if keys[pygame.K_UP]:
+                self.env.step(PlayerAction.NORTH)
+            elif keys[pygame.K_DOWN]:
+                self.env.step(PlayerAction.SOUTH)
 
-            elif keys[pygame.K_LEFT]:  # left
-                self.env.step(PlayerAction.LEFT)
+            elif keys[pygame.K_LEFT]:
+                self.env.step(PlayerAction.WEST)
 
-            elif keys[pygame.K_RIGHT]:  # right
-                self.env.step(PlayerAction.RIGHT)
+            elif keys[pygame.K_RIGHT]:
+                self.env.step(PlayerAction.EAST)
 
         self.running = self.env.unwrapped.game.running
 

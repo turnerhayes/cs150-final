@@ -9,7 +9,7 @@ from utils import recv_socket_data
 
 if __name__ == "__main__":
     # Make the env
-    action_commands = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'TOGGLE_HOLD', 'GET_OBSERVATION']
+    action_commands = ['NORTH', 'SOUTH', 'EAST', 'WEST', 'TOGGLE_HOLD', 'GET_OBSERVATION']
 
     print("action_commands: ", action_commands)
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     while True:
         # assume this is the only agent in the game
-        action = "RIGHT"
+        action = "EAST"
 
         print("Sending action: ", action)
         sock_game.send(str.encode(action))  # send action to env

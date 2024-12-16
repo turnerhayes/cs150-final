@@ -2,19 +2,19 @@ from enum import IntEnum
 
 
 class PlayerAction(IntEnum):
-    UP = 1,
-    DOWN = 2,
-    RIGHT = 3,
-    LEFT = 4,
+    NORTH = 1,
+    SOUTH = 2,
+    EAST = 3,
+    WEST = 4,
     TOGGLE_HOLD = 5,
     GET_OBSERVATION = 6,
     RESET = 7,
 
 PlayerActionTable = {
-    "UP" : PlayerAction.UP,
-    "DOWN" : PlayerAction.DOWN,
-    "RIGHT" : PlayerAction.RIGHT,
-    "LEFT" : PlayerAction.LEFT,
+    "NORTH" : PlayerAction.NORTH,
+    "SOUTH" : PlayerAction.SOUTH,
+    "EAST" : PlayerAction.EAST,
+    "WEST" : PlayerAction.WEST,
     "TOGGLE_HOLD": PlayerAction.TOGGLE_HOLD,
     "GET_OBSERVATION": PlayerAction.GET_OBSERVATION,
     "RESET": PlayerAction.RESET,

@@ -187,40 +187,40 @@ public interface BoxBotSimulatorInterface {
     Justification getObservation();
     
     /**
-     * Action to request to move the robot left.
+     * Action to request to move the robot west.
      * 
      * @return justification describing the result of the request.
      */
     @TRADEService
     @Action
-    Justification moveLeft();
+    Justification moveWest();
     
     /**
-     * Action to request to move the robot right.
+     * Action to request to move the robot east.
      * 
      * @return justification describing the result of the request.
      */
     @TRADEService
     @Action
-    Justification moveRight();
+    Justification moveEast();
     
     /**
-     * Action to request to move the robot up.
+     * Action to request to move the robot north.
      * 
      * @return justification describing the result of the request.
      */
     @TRADEService
     @Action
-    Justification moveUp();
+    Justification moveNorth();
     
     /**
-     * Action to request to move the robot down.
+     * Action to request to move the robot south.
      * 
      * @return justification describing the result of the request.
      */
     @TRADEService
     @Action
-    Justification moveDown();
+    Justification moveSouth();
     
     /**
      * Action to request the robot to release or pick up an object.

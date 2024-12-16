@@ -28,10 +28,10 @@ class Observation(TypedDict):
     wallWidth: int
 
 DIRECTION_VECTOR = {
-    Direction.UP: (0, -1),
-    Direction.DOWN: (0, 1),
-    Direction.RIGHT: (1, 0),
-    Direction.LEFT: (-1, 0)
+    Direction.NORTH: (0, -1),
+    Direction.SOUTH: (0, 1),
+    Direction.EAST: (1, 0),
+    Direction.WEST: (-1, 0)
 }
 
 class Game:
@@ -229,16 +229,16 @@ class Game:
             
 
         if robot_left <= self.wall_width:
-            # Hits left wall
+            # Hits west wall
             return True
         if robot_right >= (self.width - self.wall_width):
-            # Hits right wall
+            # Hits east wall
             return True
         if pos[1] <= self.wall_width:
-            # Hits top wall
+            # Hits north wall
             return True
         if pos[1] + self.robot_height >= (self.height - self.wall_width):
-            # Hits bottom wall
+            # Hits south wall
             return True
         
         return False

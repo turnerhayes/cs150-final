@@ -22,10 +22,10 @@ import edu.tufts.hrilab.fol.Factory;
 import edu.tufts.hrilab.fol.Symbol;
 import edu.tufts.hrilab.interfaces.BoxBotSimulatorInterface;
 import edu.tufts.hrilab.util.Util;
-import edu.tufts.hrilab.boxbot.actions.Left;
-import edu.tufts.hrilab.boxbot.actions.Right;
-import edu.tufts.hrilab.boxbot.actions.Up;
-import edu.tufts.hrilab.boxbot.actions.Down;
+import edu.tufts.hrilab.boxbot.actions.East;
+import edu.tufts.hrilab.boxbot.actions.North;
+import edu.tufts.hrilab.boxbot.actions.West;
+import edu.tufts.hrilab.boxbot.actions.South;
 import edu.tufts.hrilab.boxbot.actions.ToggleHold;
 import edu.tufts.hrilab.boxbot.actions.GetObservation;
 
@@ -256,29 +256,29 @@ public class BoxBotComponent extends DiarcComponent implements BoxBotSimulatorIn
     }
 
     @Override
-    public Justification moveLeft() {
-        GameAction action = new Left();
+    public Justification moveWest() {
+        GameAction action = new West();
         game.perform(action);
         return new ConditionJustification(action.getSuccess());
     }
     
     @Override
-    public Justification moveRight() {
-        GameAction action = new Right();
+    public Justification moveEast() {
+        GameAction action = new East();
         game.perform(action);
         return new ConditionJustification(action.getSuccess());
     }
     
     @Override
-    public Justification moveUp() {
-        GameAction action = new Up();
+    public Justification moveNorth() {
+        GameAction action = new North();
         game.perform(action);
         return new ConditionJustification(action.getSuccess());
     }
     
     @Override
-    public Justification moveDown() {
-        GameAction action = new Down();
+    public Justification moveSouth() {
+        GameAction action = new South();
         game.perform(action);
         return new ConditionJustification(action.getSuccess());
     }

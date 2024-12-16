@@ -10,6 +10,6 @@ To run the DIARC component with simulator integration and the web UI to trigger 
 3. In a third terminal, run `./gradlew launchGui` from the diarc/ directory
 4. Go to the URL output in step 3 (probably will be http://localhost:3000/)
 5. On the web UI, go to the Goal Manager tab
-6. Choose the action you want to execute (e.g. `moveLeft()`, `moveRight()`, etc.)
+6. Choose the action you want to execute (e.g. `moveWest()`, `moveEast()`, etc.)
 7. In the Submit Action tab, enter `self` for the `actor` argument to the action, then click the Submit button
 8. The simulator that should have appeared as a result of step 1 should show the selected action being executed (if possicle)

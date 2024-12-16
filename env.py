@@ -3,7 +3,7 @@ import gymnasium as gym
 from player_action import PlayerAction, PlayerActionTable
 from game import Game, Observation
 
-MOVEMENT_ACTIONS = [PlayerAction.UP, PlayerAction.DOWN, PlayerAction.RIGHT, PlayerAction.LEFT]
+MOVEMENT_ACTIONS = [PlayerAction.NORTH, PlayerAction.SOUTH, PlayerAction.EAST, PlayerAction.WEST]
 
 
 class SimulatorEnv(gym.Env):
@@ -24,14 +24,14 @@ class SimulatorEnv(gym.Env):
         success = True
 
         if action in MOVEMENT_ACTIONS:
-            if action == PlayerAction.UP:
-                direction = Direction.UP
-            elif action == PlayerAction.DOWN:
-                direction = Direction.DOWN
-            elif action == PlayerAction.RIGHT:
-                direction = Direction.RIGHT
+            if action == PlayerAction.NORTH:
+                direction = Direction.NORTH
+            elif action == PlayerAction.SOUTH:
+                direction = Direction.SOUTH
+            elif action == PlayerAction.EAST:
+                direction = Direction.EAST
             else:
-                direction = Direction.LEFT
+                direction = Direction.WEST
             success = game.player_move(direction)
         elif action == PlayerAction.TOGGLE_HOLD:
             success = game.toggle_holding_item()
@@ -66,5 +66,5 @@ if __name__ == "__main__":
     env.reset()
 
     for i in range(100):
-        env.step(PlayerAction.RIGHT)
+        env.step(PlayerAction.EAST)
         env.render()

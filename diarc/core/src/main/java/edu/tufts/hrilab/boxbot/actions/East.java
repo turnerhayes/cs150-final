@@ -4,12 +4,11 @@
 
 package edu.tufts.hrilab.boxbot.actions;
 
-public class Down extends Active {
-
-    public Down() { this.maxResponseWait = 1000; }
+public class East extends Active {
+    public East() { this.maxResponseWait = 1000; }
 
     @Override
     public String getCommand() {
-        return "DOWN";
+        return "EAST";
     }
 }
