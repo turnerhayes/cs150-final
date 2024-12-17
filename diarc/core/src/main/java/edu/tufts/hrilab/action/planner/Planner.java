@@ -89,17 +89,6 @@ public abstract class Planner {
 
     String plan = plan(domain, problem);
     if (plan == null) {
-      if (true) {
-        // DEBUG dummy response
-        plan = """
-(moveToBox boxbot)
-(pickUpBox boxbot)
-(moveToSwitch boxbot)
-(putDownBox boxbot)
-(moveToDoor boxbot)
-""";
-      }
-      else {
       log.error("Planner could not generate a plan. Falling back to LLM.");
 
       String prompt = """
@@ -143,7 +132,6 @@ The goal is:
       } catch (TRADEException e) {
           log.error("TRADE service call to LLM failed.", e);
           return null; // No fallback plan available
-      }
       }
     } else {
       log.info("PLAN = " + plan);
