@@ -26,19 +26,23 @@ To run the DIARC component with simulator integration and the web UI to trigger 
 7. In the Submit Action tab, enter `self` for the `actor` argument to the action, then click the Submit button
 8. The simulator that should have appeared as a result of step 1 should show the selected action being executed (if possible)
 
-# Changed Files:
+## Changed Files
+
 - [diarc/config/src/main/java/edu/tufts/hrilab/config/boxbot/BoxBotConfig.java](diarc/config/src/main/java/edu/tufts/hrilab/config/boxbot/BoxBotConfig.java)
     - Authors:
         - Turner Hayes
 - [diarc/core/src/main/java/edu/tufts/hrilab/interfaces/BoxBotSimulatorInterface.java](diarc/core/src/main/java/edu/tufts/hrilab/interfaces/BoxBotSimulatorInterface.java)
     - Authors:
         - Turner Hayes
+        - Ray Xu
 - [diarc/core/src/main/java/edu/tufts/hrilab/boxbot/BoxBotComponent.java](diarc/core/src/main/java/edu/tufts/hrilab/boxbot/BoxBotComponent.java)
     - Authors:
         - Turner Hayes
+        - Ray Xu
 - [diarc/core/src/main/java/edu/tufts/hrilab/boxbot/BoxBotObservation.java](diarc/core/src/main/java/edu/tufts/hrilab/boxbot/BoxBotObservation.java)
     - Authors:
         - Turner Hayes
+        - Ray Xu
 - [diarc/core/src/main/java/edu/tufts/hrilab/boxbot/GamePlay.java](diarc/core/src/main/java/edu/tufts/hrilab/boxbot/GamePlay.java)
     - Authors:
         - Turner Hayes
@@ -54,9 +58,11 @@ To run the DIARC component with simulator integration and the web UI to trigger 
 - [diarc/core/src/main/resources/config/edu/tufts/hrilab/action/asl/domains/boxbot.asl](diarc/core/src/main/resources/config/edu/tufts/hrilab/action/asl/domains/boxbot.asl)
     - Authors:
         - Turner Hayes
+        - Ray Xu
 - [diarc/core/src/main/resources/config/edu/tufts/hrilab/belief/agents/boxbot.pl](diarc/core/src/main/resources/config/edu/tufts/hrilab/belief/agents/boxbot.pl)
     - Authors:
         - Turner Hayes
+        - Ray Xu
 - All files in root directory
     - Authors:
         - Turner Hayes
